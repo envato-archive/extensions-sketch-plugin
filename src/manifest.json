@@ -1,0 +1,18 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "commands": [
+    {
+      "name": "Open Elements",
+      "identifier": "open-window",
+      "script": "./main.js"
+    }
+  ],
+  "menu": {
+    "title": "Envato Elements Sketch",
+    "items": [
+      "open-window"
+    ]
+  }
+}

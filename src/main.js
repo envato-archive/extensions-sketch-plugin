@@ -31,11 +31,13 @@ export default function(context) {
   webContents.on("connectToSketch", () => {
     webContents.executeJavaScript(`sketchConnected('${documentId}')`);
 
+    const pluginVersion = require("../package.json").version;
     const licenseCode = Settings.settingForKey("license_code");
     const licenseEmail = Settings.settingForKey("license_email");
     webContents.executeJavaScript(
       `setLicense('${licenseCode}', '${licenseEmail}')`
     );
+    webContents.executeJavaScript(`setPluginVersion('${pluginVersion}')`);
   });
 
   // Set Api Key

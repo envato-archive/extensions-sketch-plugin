@@ -4242,6 +4242,17 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./package.json":
+/*!**********************!*\
+  !*** ./package.json ***!
+  \**********************/
+/*! exports provided: name, version, engines, skpm, scripts, devDependencies, resources, author, dependencies, default */
+/***/ (function(module) {
+
+module.exports = {"name":"elements-sketch-plugin","version":"0.1.0","engines":{"sketch":">=3.0"},"skpm":{"name":"elements-sketch-plugin","manifest":"src/manifest.json","main":"elements-sketch-plugin.sketchplugin","assets":["assets/**/*"]},"scripts":{"build":"skpm-build","watch":"skpm-build --watch","start":"skpm-build --watch --run","postinstall":"npm run build && skpm-link"},"devDependencies":{"@skpm/builder":"^0.5.11","@skpm/extract-loader":"^2.0.2","css-loader":"^1.0.1","eslint-plugin-prettier":"^3.0.0","html-loader":"^0.5.5","prettier":"1.14.3","webpack":"^4.26.1","webpack-cli":"^3.1.2"},"resources":["resources/**/*.js"],"author":"smlparry <samuel.parry@bigpond.com>","dependencies":{"@skpm/fs":"^0.2.2","sketch-module-web-view":"1.2.3","skpm":"^1.1.10"}};
+
+/***/ }),
+
 /***/ "./resources/utils/importDocument.js":
 /*!*******************************************!*\
   !*** ./resources/utils/importDocument.js ***!
@@ -4419,9 +4430,13 @@ __webpack_require__.r(__webpack_exports__);
 
   webContents.on("connectToSketch", function () {
     webContents.executeJavaScript("sketchConnected('".concat(documentId, "')"));
+
+    var pluginVersion = __webpack_require__(/*! ../package.json */ "./package.json").version;
+
     var licenseCode = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_code");
     var licenseEmail = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_email");
     webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
+    webContents.executeJavaScript("setPluginVersion('".concat(pluginVersion, "')"));
   }); // Set Api Key
 
   webContents.on("setLicense", function (licenseCode, licenseEmail) {

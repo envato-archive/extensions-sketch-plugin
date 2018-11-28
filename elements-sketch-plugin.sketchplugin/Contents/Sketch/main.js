@@ -91,6 +91,273 @@ var exports =
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/@skpm/events/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/@skpm/events/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function EventEmitter () {}
+
+// By default, a maximum of 10 listeners can be registered for any single event.
+EventEmitter.defaultMaxListeners = 10
+
+// Shortcuts to improve speed and size
+var proto = EventEmitter.prototype
+
+proto._maxListeners = EventEmitter.defaultMaxListeners
+
+function indexOfListener (listeners, listener) {
+  var i = listeners.length
+  while (i--) {
+    if (listeners[i].listener === listener) {
+      return i
+    }
+  }
+
+  return -1
+}
+
+function alias (name) {
+  return function aliasClosure () {
+    return this[name].apply(this, arguments)
+  }
+}
+
+function isValidListener (listener) {
+  if (typeof listener === 'function') {
+    return true
+  } else if (listener && typeof listener === 'object') {
+    return isValidListener(listener.listener)
+  } else {
+    return false
+  }
+}
+
+proto._getListeners = function _getListeners (evt) {
+  var events = this._getEvents()
+
+  return events[evt] || (events[evt] = [])
+}
+
+proto._getEvents = function _getEvents () {
+  return this._events || (this._events = {})
+}
+
+/*
+  Alias for emitter.on(eventName, listener).
+*/
+proto.addListener = alias('on')
+
+/*
+  Synchronously calls each of the listeners registered for the event named eventName, in the order they were registered, passing the supplied arguments to each.
+
+  Returns true if the event had listeners, false otherwise.
+*/
+proto.emit = function emit (evt) {
+  var args = Array.prototype.slice.call(arguments, 1)
+  var listeners = this._getListeners(evt) || []
+  var listener
+  var i
+  var key
+  var response
+
+  for (i = 0; i < listeners.length; i++) {
+    listener = listeners[i]
+
+    if (listener.once === true) {
+      this.removeListener(evt, listener.listener)
+    }
+
+    response = listener.listener.apply(this, args || [])
+  }
+
+  return listeners.length > 0
+}
+
+/*
+  Returns an array listing the events for which the emitter has registered listeners.
+  The values in the array will be strings or Symbols.
+*/
+proto.eventNames = function eventNames () {
+  var events = this._getEvents()
+  return Object.keys(events)
+}
+
+/*
+  Returns the current max listener value for the EventEmitter which is either set by emitter.setMaxListeners(n) or defaults to EventEmitter.defaultMaxListeners.
+*/
+proto.getMaxListeners = function getMaxListeners() {
+  return this._maxListeners
+}
+
+/*
+  Returns the number of listeners listening to the event named eventName.
+*/
+proto.listenerCount = function listenerCount(eventName) {
+  return this._getListeners(eventName).length
+}
+
+/*
+  Returns a copy of the array of listeners for the event named eventName.
+*/
+proto.listeners = function listeners(eventName) {
+  return this._getListeners(eventName).map(function (wrappedListener) {
+    return wrappedListener.listener
+  })
+}
+
+/*
+  Adds the listener function to the end of the listeners array for the event named eventName. No checks are made to see if the listener has already been added. Multiple calls passing the same combination of eventName and listener will result in the listener being added, and called, multiple times.
+
+  Returns a reference to the EventEmitter, so that calls can be chained.
+
+  By default, event listeners are invoked in the order they are added. The emitter.prependListener() method can be used as an alternative to add the event listener to the beginning of the listeners array.
+*/
+proto.on = function on (evt, listener) {
+  if (!isValidListener(listener)) {
+    throw new Error('listener must be a function')
+  }
+
+  var listeners = this._getListeners(evt)
+  var listenerIsWrapped = typeof listener === 'object'
+
+  this.emit('newListener', evt, listenerIsWrapped ? listener.listener : listener)
+
+  listeners.push(
+    listenerIsWrapped
+    ? listener
+    : {
+      listener: listener,
+      once: false
+    }
+  )
+
+  return this
+}
+
+/*
+  Adds a one-time listener function for the event named eventName. The next time eventName is triggered, this listener is removed and then invoked.
+
+  Returns a reference to the EventEmitter, so that calls can be chained.
+
+  By default, event listeners are invoked in the order they are added. The emitter.prependOnceListener() method can be used as an alternative to add the event listener to the beginning of the listeners array.
+*/
+proto.once = function once (evt, listener) {
+  return this.on(evt, {
+    listener: listener,
+    once: true
+  })
+}
+
+/*
+  Adds the listener function to the beginning of the listeners array for the event named eventName. No checks are made to see if the listener has already been added. Multiple calls passing the same combination of eventName and listener will result in the listener being added, and called, multiple times.
+
+  Returns a reference to the EventEmitter, so that calls can be chained.
+*/
+proto.prependListener = function prependListener (evt, listener) {
+  if (!isValidListener(listener)) {
+    throw new Error('listener must be a function')
+  }
+
+  var listeners = this._getListeners(evt)
+  var listenerIsWrapped = typeof listener === 'object'
+
+  this.emit('newListener', evt, listenerIsWrapped ? listener.listener : listener)
+
+  listeners.unshift(
+    listenerIsWrapped
+    ? listener
+    : {
+      listener: listener,
+      once: false
+    }
+  )
+
+  return this
+}
+
+/*
+  Adds a one-time listener function for the event named eventName to the beginning of the listeners array. The next time eventName is triggered, this listener is removed, and then invoked.
+
+  Returns a reference to the EventEmitter, so that calls can be chained.
+*/
+proto.prependOnceListener = function prependOnceListener (evt, listener) {
+  return this.prependListener(evt, {
+    listener: listener,
+    once: true
+  })
+}
+
+/*
+  Removes all listeners, or those of the specified eventName.
+
+  Note that it is bad practice to remove listeners added elsewhere in the code, particularly when the EventEmitter instance was created by some other component or module (e.g. sockets or file streams).
+
+  Returns a reference to the EventEmitter, so that calls can be chained.
+*/
+proto.removeAllListeners = function removeAllListeners (evt) {
+  var events = this._getEvents()
+
+  if (typeof evt === 'string') {
+    // Remove all listeners for the specified event
+    delete events[evt]
+  } else {
+    // Remove all listeners in all events
+    delete this._events
+  }
+
+  return this
+}
+
+/*
+  Removes the specified listener from the listener array for the event named eventName.
+
+  removeListener will remove, at most, one instance of a listener from the listener array. If any single listener has been added multiple times to the listener array for the specified eventName, then removeListener must be called multiple times to remove each instance.
+
+  Note that once an event has been emitted, all listeners attached to it at the time of emitting will be called in order. This implies that any removeListener() or removeAllListeners() calls after emitting and before the last listener finishes execution will not remove them from emit() in progress. Subsequent events will behave as expected.
+
+  Because listeners are managed using an internal array, calling this will change the position indices of any listener registered after the listener being removed. This will not impact the order in which listeners are called, but it means that any copies of the listener array as returned by the emitter.listeners() method will need to be recreated.
+
+  Returns a reference to the EventEmitter, so that calls can be chained.
+*/
+proto.removeListener = function removeListener (evt, listener) {
+  var listeners = this._getListeners(evt)
+
+  var index = indexOfListener(listeners, listener)
+
+  if (index !== -1) {
+    listeners.splice(index, 1)
+
+    this.emit('removeListener', evt, listener)
+  }
+
+  return this
+}
+
+/*
+  By default EventEmitters will print a warning if more than 10 listeners are added for a particular event. This is a useful default that helps finding memory leaks. Obviously, not all events should be limited to just 10 listeners. The emitter.setMaxListeners() method allows the limit to be modified for this specific EventEmitter instance. The value can be set to Infinity (or 0) to indicate an unlimited number of listeners.
+
+  Returns a reference to the EventEmitter, so that calls can be chained.
+*/
+proto.setMaxListeners = function setMaxListeners (n) {
+  this._maxListeners = n
+  return this
+}
+
+/*
+  Returns a copy of the array of listeners for the event named eventName, including any wrappers (such as those created by .once).
+*/
+proto.rawListeners = function rawListeners (evt) {
+  return this._getListeners(evt).slice()
+}
+
+module.exports = EventEmitter
+
+
+/***/ }),
+
 /***/ "./node_modules/@skpm/fs/index.js":
 /*!****************************************!*\
   !*** ./node_modules/@skpm/fs/index.js ***!
@@ -380,116 +647,6 @@ module.exports.writeFileSync = function(path, data, options) {
   ).toNSData()
 
   nsdata.writeToFile_atomically(path, true)
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/@skpm/timers/immediate.js":
-/*!************************************************!*\
-  !*** ./node_modules/@skpm/timers/immediate.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* globals coscript, sketch */
-var timeout = __webpack_require__(/*! ./timeout */ "./node_modules/@skpm/timers/timeout.js")
-
-function setImmediate(func, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
-  return timeout.setTimeout(func, 0, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-}
-
-function clearImmediate(id) {
-  return timeout.clearTimeout(id)
-}
-
-module.exports = {
-  setImmediate: setImmediate,
-  clearImmediate: clearImmediate
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/@skpm/timers/test-if-fiber.js":
-/*!****************************************************!*\
-  !*** ./node_modules/@skpm/timers/test-if-fiber.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = function () {
-  return typeof coscript !== 'undefined' && coscript.createFiber
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/@skpm/timers/timeout.js":
-/*!**********************************************!*\
-  !*** ./node_modules/@skpm/timers/timeout.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* globals coscript, sketch */
-var fiberAvailable = __webpack_require__(/*! ./test-if-fiber */ "./node_modules/@skpm/timers/test-if-fiber.js")
-
-var setTimeout
-var clearTimeout
-
-var fibers = []
-
-if (fiberAvailable()) {
-  var fibers = []
-
-  setTimeout = function (func, delay, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
-    // fibers takes care of keeping coscript around
-    var id = fibers.length
-    fibers.push(coscript.scheduleWithInterval_jsFunction(
-      (delay || 0) / 1000,
-      function () {
-        func(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-      }
-    ))
-    return id
-  }
-
-  clearTimeout = function (id) {
-    var timeout = fibers[id]
-    if (timeout) {
-      timeout.cancel() // fibers takes care of keeping coscript around
-      fibers[id] = undefined // garbage collect the fiber
-    }
-  }
-} else {
-  setTimeout = function (func, delay, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
-    coscript.shouldKeepAround = true
-    var id = fibers.length
-    fibers.push(true)
-    coscript.scheduleWithInterval_jsFunction(
-      (delay || 0) / 1000,
-      function () {
-        if (fibers[id]) { // if not cleared
-          func(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
-        }
-        clearTimeout(id)
-        if (fibers.every(function (_id) { return !_id })) { // if everything is cleared
-          coscript.shouldKeepAround = false
-        }
-      }
-    )
-    return id
-  }
-
-  clearTimeout = function (id) {
-    fibers[id] = false
-  }
-}
-
-module.exports = {
-  setTimeout: setTimeout,
-  clearTimeout: clearTimeout
 }
 
 
@@ -2759,278 +2916,6 @@ module.exports = Array.isArray || function (arr) {
 
 /***/ }),
 
-/***/ "./node_modules/promise-polyfill/lib/index.js":
-/*!****************************************************!*\
-  !*** ./node_modules/promise-polyfill/lib/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(setTimeout, setImmediate) {
-
-/**
- * @this {Promise}
- */
-function finallyConstructor(callback) {
-  var constructor = this.constructor;
-  return this.then(
-    function(value) {
-      return constructor.resolve(callback()).then(function() {
-        return value;
-      });
-    },
-    function(reason) {
-      return constructor.resolve(callback()).then(function() {
-        return constructor.reject(reason);
-      });
-    }
-  );
-}
-
-// Store setTimeout reference so promise-polyfill will be unaffected by
-// other code modifying setTimeout (like sinon.useFakeTimers())
-var setTimeoutFunc = setTimeout;
-
-function noop() {}
-
-// Polyfill for Function.prototype.bind
-function bind(fn, thisArg) {
-  return function() {
-    fn.apply(thisArg, arguments);
-  };
-}
-
-/**
- * @constructor
- * @param {Function} fn
- */
-function Promise(fn) {
-  if (!(this instanceof Promise))
-    throw new TypeError('Promises must be constructed via new');
-  if (typeof fn !== 'function') throw new TypeError('not a function');
-  /** @type {!number} */
-  this._state = 0;
-  /** @type {!boolean} */
-  this._handled = false;
-  /** @type {Promise|undefined} */
-  this._value = undefined;
-  /** @type {!Array<!Function>} */
-  this._deferreds = [];
-
-  doResolve(fn, this);
-}
-
-function handle(self, deferred) {
-  while (self._state === 3) {
-    self = self._value;
-  }
-  if (self._state === 0) {
-    self._deferreds.push(deferred);
-    return;
-  }
-  self._handled = true;
-  Promise._immediateFn(function() {
-    var cb = self._state === 1 ? deferred.onFulfilled : deferred.onRejected;
-    if (cb === null) {
-      (self._state === 1 ? resolve : reject)(deferred.promise, self._value);
-      return;
-    }
-    var ret;
-    try {
-      ret = cb(self._value);
-    } catch (e) {
-      reject(deferred.promise, e);
-      return;
-    }
-    resolve(deferred.promise, ret);
-  });
-}
-
-function resolve(self, newValue) {
-  try {
-    // Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
-    if (newValue === self)
-      throw new TypeError('A promise cannot be resolved with itself.');
-    if (
-      newValue &&
-      (typeof newValue === 'object' || typeof newValue === 'function')
-    ) {
-      var then = newValue.then;
-      if (newValue instanceof Promise) {
-        self._state = 3;
-        self._value = newValue;
-        finale(self);
-        return;
-      } else if (typeof then === 'function') {
-        doResolve(bind(then, newValue), self);
-        return;
-      }
-    }
-    self._state = 1;
-    self._value = newValue;
-    finale(self);
-  } catch (e) {
-    reject(self, e);
-  }
-}
-
-function reject(self, newValue) {
-  self._state = 2;
-  self._value = newValue;
-  finale(self);
-}
-
-function finale(self) {
-  if (self._state === 2 && self._deferreds.length === 0) {
-    Promise._immediateFn(function() {
-      if (!self._handled) {
-        Promise._unhandledRejectionFn(self._value);
-      }
-    });
-  }
-
-  for (var i = 0, len = self._deferreds.length; i < len; i++) {
-    handle(self, self._deferreds[i]);
-  }
-  self._deferreds = null;
-}
-
-/**
- * @constructor
- */
-function Handler(onFulfilled, onRejected, promise) {
-  this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
-  this.onRejected = typeof onRejected === 'function' ? onRejected : null;
-  this.promise = promise;
-}
-
-/**
- * Take a potentially misbehaving resolver function and make sure
- * onFulfilled and onRejected are only called once.
- *
- * Makes no guarantees about asynchrony.
- */
-function doResolve(fn, self) {
-  var done = false;
-  try {
-    fn(
-      function(value) {
-        if (done) return;
-        done = true;
-        resolve(self, value);
-      },
-      function(reason) {
-        if (done) return;
-        done = true;
-        reject(self, reason);
-      }
-    );
-  } catch (ex) {
-    if (done) return;
-    done = true;
-    reject(self, ex);
-  }
-}
-
-Promise.prototype['catch'] = function(onRejected) {
-  return this.then(null, onRejected);
-};
-
-Promise.prototype.then = function(onFulfilled, onRejected) {
-  // @ts-ignore
-  var prom = new this.constructor(noop);
-
-  handle(this, new Handler(onFulfilled, onRejected, prom));
-  return prom;
-};
-
-Promise.prototype['finally'] = finallyConstructor;
-
-Promise.all = function(arr) {
-  return new Promise(function(resolve, reject) {
-    if (!arr || typeof arr.length === 'undefined')
-      throw new TypeError('Promise.all accepts an array');
-    var args = Array.prototype.slice.call(arr);
-    if (args.length === 0) return resolve([]);
-    var remaining = args.length;
-
-    function res(i, val) {
-      try {
-        if (val && (typeof val === 'object' || typeof val === 'function')) {
-          var then = val.then;
-          if (typeof then === 'function') {
-            then.call(
-              val,
-              function(val) {
-                res(i, val);
-              },
-              reject
-            );
-            return;
-          }
-        }
-        args[i] = val;
-        if (--remaining === 0) {
-          resolve(args);
-        }
-      } catch (ex) {
-        reject(ex);
-      }
-    }
-
-    for (var i = 0; i < args.length; i++) {
-      res(i, args[i]);
-    }
-  });
-};
-
-Promise.resolve = function(value) {
-  if (value && typeof value === 'object' && value.constructor === Promise) {
-    return value;
-  }
-
-  return new Promise(function(resolve) {
-    resolve(value);
-  });
-};
-
-Promise.reject = function(value) {
-  return new Promise(function(resolve, reject) {
-    reject(value);
-  });
-};
-
-Promise.race = function(values) {
-  return new Promise(function(resolve, reject) {
-    for (var i = 0, len = values.length; i < len; i++) {
-      values[i].then(resolve, reject);
-    }
-  });
-};
-
-// Use polyfill for setImmediate for performance gains
-Promise._immediateFn =
-  (typeof setImmediate === 'function' &&
-    function(fn) {
-      setImmediate(fn);
-    }) ||
-  function(fn) {
-    setTimeoutFunc(fn, 0);
-  };
-
-Promise._unhandledRejectionFn = function _unhandledRejectionFn(err) {
-  if (typeof console !== 'undefined' && console) {
-    console.warn('Possible Unhandled Promise Rejection:', err); // eslint-disable-line no-console
-  }
-};
-
-module.exports = Promise;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@skpm/timers/timeout.js */ "./node_modules/@skpm/timers/timeout.js")["setTimeout"], __webpack_require__(/*! ./node_modules/@skpm/timers/immediate.js */ "./node_modules/@skpm/timers/immediate.js")["setImmediate"]))
-
-/***/ }),
-
 /***/ "./node_modules/sketch-module-web-view/lib/browser-api.js":
 /*!****************************************************************!*\
   !*** ./node_modules/sketch-module-web-view/lib/browser-api.js ***!
@@ -3099,22 +2984,6 @@ module.exports = function(browserWindow, panel, webview) {
   }
 
   browserWindow.close = function() {
-    if (panel.delegate().utils.parentWindow) {
-      var shouldClose = true
-      browserWindow.emit('close', {
-        get defaultPrevented() {
-          return !shouldClose
-        },
-        preventDefault: function() {
-          shouldClose = false
-        },
-      })
-      if (shouldClose) {
-        panel.delegate().utils.parentWindow.endSheet(panel)
-      }
-      return
-    }
-
     if (!browserWindow.isClosable()) {
       return
     }
@@ -3149,15 +3018,6 @@ module.exports = function(browserWindow, panel, webview) {
     // This method is supposed to put focus on window, however if the app does not
     // have focus then "makeKeyAndOrderFront" will only show the window.
     NSApp.activateIgnoringOtherApps(true)
-
-    if (panel.delegate().utils.parentWindow) {
-      return panel.delegate().utils.parentWindow.beginSheet_completionHandler(
-        panel,
-        __mocha__.createBlock_function('v16@?0q8', function() {
-          browserWindow.emit('closed')
-        })
-      )
-    }
 
     return panel.makeKeyAndOrderFront(null)
   }
@@ -3484,24 +3344,13 @@ module.exports = function(browserWindow, panel, webview) {
     // When frameLocation is a file, prefix it with the Sketch Resources path
     if (/^(?!http|localhost|www|file).*\.html?$/.test(url)) {
       if (typeof __command !== 'undefined' && __command.pluginBundle()) {
-        url =
-          'file://' +
-          __command
-            .pluginBundle()
-            .urlForResourceNamed(url)
-            .path()
+        url = __command
+          .pluginBundle()
+          .urlForResourceNamed(url)
+          .path()
       }
     }
-
-    if (/^file:\/\/.*\.html?$/.test(url)) {
-      webview.loadFileURL_allowingReadAccessToURL(
-        NSURL.fileURLWithPath(url),
-        NSURL.fileURLWithPath('file:///')
-      )
-      return
-    }
-
-    webview.loadRequest(NSURLRequest.requestWithURL(NSURL.URLWithString(url)))
+    webview.setMainFrameURL(url)
   }
 
   browserWindow.reload = function() {
@@ -3608,8 +3457,7 @@ module.exports = function(browserWindow, panel, webview) {
 
   browserWindow._setBackgroundColor = function(colorName) {
     var color = parseHexColor(colorName)
-    webview.isOpaque = false
-    webview.setBackgroundColor(NSColor.clearColor())
+    webview.setDrawsBackground(false)
     panel.backgroundColor = color
   }
 
@@ -3742,12 +3590,11 @@ module.exports = function fitSubviewToView(subview, view, constants) {
 
 /* let's try to match the API from Electron's Browser window
 (https://github.com/electron/electron/blob/master/docs/api/browser-window.md) */
-var EventEmitter = __webpack_require__(/*! events */ "events")
+var EventEmitter = __webpack_require__(/*! @skpm/events */ "./node_modules/@skpm/events/index.js")
 var buildBrowserAPI = __webpack_require__(/*! ./browser-api */ "./node_modules/sketch-module-web-view/lib/browser-api.js")
 var buildWebAPI = __webpack_require__(/*! ./webview-api */ "./node_modules/sketch-module-web-view/lib/webview-api.js")
 var fitSubviewToView = __webpack_require__(/*! ./fitSubview */ "./node_modules/sketch-module-web-view/lib/fitSubview.js")
 var dispatchFirstClick = __webpack_require__(/*! ./dispatch-first-click */ "./node_modules/sketch-module-web-view/lib/dispatch-first-click.js")
-var injectClientMessaging = __webpack_require__(/*! ./inject-client-messaging */ "./node_modules/sketch-module-web-view/lib/inject-client-messaging.js")
 var setDelegates = __webpack_require__(/*! ./set-delegates */ "./node_modules/sketch-module-web-view/lib/set-delegates.js")
 
 function BrowserWindow(options) {
@@ -3766,12 +3613,13 @@ function BrowserWindow(options) {
   var browserWindow = new EventEmitter()
   browserWindow.id = identifier
 
-  if (options.modal && !options.parent) {
-    throw new Error('A modal needs to have a parent.')
-  }
-
   // Long-running script
-  var fiber = coscript.createFiber()
+  var fiber
+  try {
+    fiber = coscript.createFiber()
+  } catch (err) {
+    coscript.shouldKeepAround = true
+  }
 
   // Window size
   var width = options.width || 800
@@ -3814,6 +3662,8 @@ function BrowserWindow(options) {
     styleMask |= NSTexturedBackgroundWindowMask
   }
 
+  // TODO: handle modal mode
+
   var panel = NSPanel.alloc().initWithContentRect_styleMask_backing_defer(
     cocoaBounds,
     styleMask,
@@ -3821,17 +3671,14 @@ function BrowserWindow(options) {
     true
   )
 
-  var wkwebviewConfig = WKWebViewConfiguration.alloc().init()
-  var webView = WKWebView.alloc().initWithFrame_configuration(
-    CGRectMake(0, 0, options.width || 800, options.height || 600),
-    wkwebviewConfig
+  var webView = WebView.alloc().initWithFrame(
+    NSMakeRect(0, 0, options.width || 800, options.height || 600)
   )
-  injectClientMessaging(webView)
   webView.setAutoresizingMask(NSViewWidthSizable | NSViewHeightSizable)
 
   buildBrowserAPI(browserWindow, panel, webView)
   buildWebAPI(browserWindow, panel, webView)
-  setDelegates(browserWindow, panel, webView, options)
+  setDelegates(browserWindow, panel, webView)
 
   if (options.windowType === 'desktop') {
     panel.setLevel(kCGDesktopWindowLevel - 1)
@@ -3928,36 +3775,8 @@ function BrowserWindow(options) {
     browserWindow.setOpacity(options.opacity)
   }
 
-  options.webPreferences = options.webPreferences || {}
-
-  webView
-    .configuration()
-    .preferences()
-    .setValue_forKey(
-      options.webPreferences.devTools !== false,
-      'developerExtrasEnabled'
-    )
-  webView
-    .configuration()
-    .preferences()
-    .setValue_forKey(
-      options.webPreferences.devTools !== false,
-      'javaScriptEnabled'
-    )
-  webView
-    .configuration()
-    .preferences()
-    .setValue_forKey(!!options.webPreferences.plugins, 'plugInsEnabled')
-  webView
-    .configuration()
-    .preferences()
-    .setValue_forKey(
-      options.webPreferences.minimumFontSize || 0,
-      'minimumFontSize'
-    )
-
-  if (options.webPreferences.zoomFactor) {
-    webView.setMagnification(options.webPreferences.zoomFactor)
+  if (options.webPreferences) {
+    // TODO:
   }
 
   var contentView = panel.contentView()
@@ -4005,9 +3824,9 @@ function BrowserWindow(options) {
   if (options.acceptsFirstMouse) {
     browserWindow.on('focus', function(event) {
       if (event.type() === NSEventTypeLeftMouseDown) {
-        browserWindow.webContents
-          .executeJavaScript(dispatchFirstClick(webView, event))
-          .catch(() => {})
+        browserWindow.webContents.executeJavaScript(
+          dispatchFirstClick(webView, event)
+        )
       }
     })
   }
@@ -4019,16 +3838,22 @@ function BrowserWindow(options) {
   browserWindow.on('closed', function() {
     browserWindow._destroyed = true
     threadDictionary.removeObjectForKey(identifier)
-    fiber.cleanup()
+    if (fiber) {
+      fiber.cleanup()
+    } else {
+      coscript.shouldKeepAround = false
+    }
   })
 
   threadDictionary[identifier] = panel
 
-  fiber.onCleanup(function() {
-    if (!browserWindow._destroyed) {
-      browserWindow.destroy()
-    }
-  })
+  if (fiber) {
+    fiber.onCleanup(function() {
+      if (!browserWindow._destroyed) {
+        browserWindow.destroy()
+      }
+    })
+  }
 
   return browserWindow
 }
@@ -4064,42 +3889,6 @@ BrowserWindow.fromPanel = function(panel, identifier) {
 }
 
 module.exports = BrowserWindow
-
-
-/***/ }),
-
-/***/ "./node_modules/sketch-module-web-view/lib/inject-client-messaging.js":
-/*!****************************************************************************!*\
-  !*** ./node_modules/sketch-module-web-view/lib/inject-client-messaging.js ***!
-  \****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var CONSTANTS = __webpack_require__(/*! ./constants */ "./node_modules/sketch-module-web-view/lib/constants.js")
-
-module.exports = function(webView) {
-  var source =
-    'window.originalPostMessage = window.postMessage;' +
-    'window.postMessage = function(actionName) {' +
-    'if (!actionName) {' +
-    "throw new Error('missing action name')" +
-    '}' +
-    'window.webkit.messageHandlers.' +
-    CONSTANTS.JS_BRIDGE +
-    '.postMessage(' +
-    'JSON.stringify([].slice.call(arguments))' +
-    ');' +
-    '}'
-  var script = WKUserScript.alloc().initWithSource_injectionTime_forMainFrameOnly(
-    source,
-    0,
-    true
-  )
-  webView
-    .configuration()
-    .userContentController()
-    .addUserScript(script)
-}
 
 
 /***/ }),
@@ -4147,63 +3936,46 @@ var CONSTANTS = __webpack_require__(/*! ./constants */ "./node_modules/sketch-mo
 
 // We create one ObjC class for ourselves here
 var WindowDelegateClass
-var NavigationDelegateClass
-var WebScriptHandlerClass
+var FrameLoadDelegateClass
 
-// TODO: events
-// - 'page-favicon-updated'
-// - 'new-window'
-// - 'did-navigate-in-page'
-// - 'will-prevent-unload'
-// - 'crashed'
-// - 'unresponsive'
-// - 'responsive'
-// - 'destroyed'
-// - 'before-input-event'
-// - 'certificate-error'
-// - 'found-in-page'
-// - 'media-started-playing'
-// - 'media-paused'
-// - 'did-change-theme-color'
-// - 'update-target-url'
-// - 'cursor-changed'
-// - 'context-menu'
-// - 'select-bluetooth-device'
-// - 'paint'
-// - 'console-message'
-
-module.exports = function(browserWindow, panel, webview, options) {
+module.exports = function(browserWindow, panel, webview) {
   if (!WindowDelegateClass) {
     WindowDelegateClass = ObjCClass({
       classname: 'WindowDelegateClass',
       utils: null,
-      panel: null,
 
+      // Tells the delegate that the window has been resized.
       'windowDidResize:': function() {
         this.utils.emit('resize')
       },
 
+      // Tells the delegate that the window has been resized.
       'windowDidMiniaturize:': function() {
         this.utils.emit('minimize')
       },
 
+      // Tells the delegate that the window has been resized.
       'windowDidDeminiaturize:': function() {
         this.utils.emit('restore')
       },
 
+      // Tells the delegate that the window has been resized.
       'windowDidEnterFullScreen:': function() {
         this.utils.emit('enter-full-screen')
       },
 
+      // Tells the delegate that the window has been resized.
       'windowDidExitFullScreen:': function() {
         this.utils.emit('leave-full-screen')
       },
 
+      // Tells the delegate that the window has been resized.
       'windowDidMove:': function() {
         this.utils.emit('move')
         this.utils.emit('moved')
       },
 
+      // Tells the delegate that the window has been resized.
       'windowShouldClose:': function() {
         var shouldClose = true
         this.utils.emit('close', {
@@ -4222,7 +3994,7 @@ module.exports = function(browserWindow, panel, webview, options) {
       },
 
       'windowDidBecomeKey:': function() {
-        this.utils.emit('focus', this.panel.currentEvent())
+        this.utils.emit('focus', panel.currentEvent())
       },
 
       'windowDidResignKey:': function() {
@@ -4231,176 +4003,154 @@ module.exports = function(browserWindow, panel, webview, options) {
     })
   }
 
-  if (!NavigationDelegateClass) {
-    NavigationDelegateClass = ObjCClass({
-      classname: 'NavigationDelegateClass',
+  if (!FrameLoadDelegateClass) {
+    FrameLoadDelegateClass = ObjCClass({
+      classname: 'FrameLoadDelegateClass',
       state: NSMutableDictionary.dictionaryWithDictionary({
+        lastQueryId: null,
         wasReady: 0,
       }),
       utils: null,
 
-      // // Called when the web view begins to receive web content.
-      'webView:didCommitNavigation:': function(webView) {
-        this.utils.emit('will-navigate', {}, String(String(webView.url())))
-      },
-
-      // // Called when web content begins to load in a web view.
-      'webView:didStartProvisionalNavigation:': function() {
-        this.utils.emit('did-start-navigation')
-        this.utils.emit('did-start-loading')
-      },
-
-      // Called when a web view receives a server redirect.
-      'webView:didReceiveServerRedirectForProvisionalNavigation:': function() {
-        this.utils.emit('did-get-redirect-request')
-      },
-
-      // // Called when the web view needs to respond to an authentication challenge.
-      'webView:didReceiveAuthenticationChallenge:completionHandler:': function(
-        webView,
-        challenge,
-        completionHandler
-      ) {
-        function callback(username, password) {
-          completionHandler(
-            0,
-            NSURLCredential.credentialWithUser_password_persistence(
-              username,
-              password,
-              1
-            )
-          )
-        }
-        var protectionSpace = challenge.protectionSpace()
-        this.utils.emit(
-          'login',
-          {},
-          {
-            method: String(protectionSpace.authenticationMethod()),
-            url: 'not implemented', // TODO:
-            referrer: 'not implemented', // TODO:
-          },
-          {
-            isProxy: !!protectionSpace.isProxy(),
-            scheme: String(protectionSpace.protocol()),
-            host: String(protectionSpace.host()),
-            port: Number(protectionSpace.port()),
-            realm: String(protectionSpace.realm()),
-          },
-          callback
-        )
-      },
-
-      // Called when an error occurs during navigation.
-      // 'webView:didFailNavigation:withError:': function(
+      // // Called when a client redirect is cancelled.
+      // 'webView:didCancelClientRedirectForFrame:': function (
       //   webView,
-      //   navigation,
-      //   error
+      //   webFrame
       // ) {},
 
-      // Called when an error occurs while the web view is loading content.
-      'webView:didFailProvisionalNavigation:withError:': function(
-        webView,
-        navigation,
-        error
+      // Called when the scroll position within a frame changes.
+      'webView:didChangeLocationWithinPageForFrame:': function(webView) {
+        this.utils.emit('did-navigate-in-page', [
+          {},
+          String(
+            webView.stringByEvaluatingJavaScriptFromString(
+              'window.location.href'
+            )
+          ),
+        ])
+      },
+
+      // // Called when the JavaScript window object in a frame is ready for loading.
+      // 'webView:didClearWindowObject:forFrame:': function (
+      //   webView,
+      //   windowObject,
+      //   webFrame
+      // ) {},
+
+      // // Called when content starts arriving for a page load.
+      // 'webView:didCommitLoadforFrame:': function (webView, webFrame) {},
+
+      // // Notifies the delegate that a new JavaScript context has been created.
+      // N.B - we intentionally omit the 2nd parameter (javascriptContext)
+      // It was causing crashes in Sketch - possibly because of issues with converting
+      // it from Objective C to Javascript
+      'webView:didCreateJavaScriptContext:forFrame:': function(webView) {
+        // any time there is a new js context, set a global value (on window.) to refer
+        // to this frameloaddelegate class
+        webView.windowScriptObject().setValue_forKey_(this, CONSTANTS.JS_BRIDGE)
+      },
+
+      // the normal way to expose a selector to webscript is with 'isSelectorExcludedFromWebScript:'
+      // but that didn't work, so this is an alternative. This method gets invoked any time
+      // an unknown method is called on this class by webscript
+      'invokeUndefinedMethodFromWebScript:withArguments:': function(
+        method,
+        webArguments
       ) {
+        if (String(method) !== 'callNative') {
+          return false
+        }
+
+        var args = this.utils.parseWebArguments(webArguments)
+        if (!args) {
+          return false
+        }
+
+        this.utils.emit.apply(this, args)
+        return true
+      },
+
+      // Called when an error occurs loading a committed data source.
+      'webView:didFailLoadWithError:forFrame:': function(_, error) {
         this.utils.emit('did-fail-load', error)
       },
 
-      // Called when the navigation is complete.
-      'webView:didFinishNavigation:': function() {
+      // Called when a page load completes.
+      'webView:didFinishLoadForFrame:': function() {
         if (this.state.wasReady == 0) {
           // eslint-disable-line
           this.utils.emitBrowserEvent('ready-to-show')
           this.state.setObject_forKey(1, 'wasReady')
         }
-        this.utils.emit('did-navigate')
-        this.utils.emit('did-frame-navigate')
-        this.utils.emit('did-stop-loading')
         this.utils.emit('did-finish-load')
         this.utils.emit('did-frame-finish-load')
-      },
-
-      // Called when the web view’s web content process is terminated.
-      'webViewWebContentProcessDidTerminate:': function() {
         this.utils.emit('dom-ready')
       },
 
-      // Decides whether to allow or cancel a navigation.
-      // webView:decidePolicyForNavigationAction:decisionHandler:
+      // Called when a provisional data source for a frame receives a server redirect.
+      'webView:didReceiveServerRedirectForProvisionalLoadForFrame:': function() {
+        this.utils.emit('did-get-redirect-request')
+      },
 
-      // Decides whether to allow or cancel a navigation after its response is known.
-      // webView:decidePolicyForNavigationResponse:decisionHandler:
-    })
-  }
+      // Called when the page title of a frame loads or changes.
+      'webView:didReceiveTitle:forFrame:': function(_, _title) {
+        var title = String(_title)
+        var shouldChangeTitle = true
+        this.utils.emitBrowserEvent(
+          'page-title-updated',
+          {
+            get defaultPrevented() {
+              return !shouldChangeTitle
+            },
+            preventDefault: function() {
+              shouldChangeTitle = false
+            },
+          },
+          title
+        )
 
-  if (!WebScriptHandlerClass) {
-    WebScriptHandlerClass = ObjCClass({
-      classname: 'WebScriptHandlerClass',
-      utils: null,
-      'userContentController:didReceiveScriptMessage:': function(_, message) {
-        var webArguments = JSON.parse(String(message.body()))
-        var args = this.utils.parseWebArguments([JSON.stringify(webArguments)])
-        if (!args) {
-          return
+        if (shouldChangeTitle && title) {
+          this.utils.setTitle(title)
         }
+      },
 
-        this.utils.emit.apply(this, args)
+      // Called when a page load is in progress in a given frame.
+      'webView:didStartProvisionalLoadForFrame:': function() {
+        this.utils.emit('did-start-loading')
+      },
+
+      // Called when a frame will be closed.
+      // 'webView:willCloseFrame:': function (webView, webFrame) {}
+
+      // Called when a frame receives a client redirect and before it is fired.
+      'webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:': function(
+        _,
+        url
+      ) {
+        this.utils.emit('will-navigate', {}, String(url.absoluteString))
       },
     })
   }
 
-  var navigationDelegate = NavigationDelegateClass.new()
-  navigationDelegate.utils = NSDictionary.dictionaryWithDictionary({
+  var frameLoadDelegate = FrameLoadDelegateClass.new()
+  frameLoadDelegate.utils = NSDictionary.dictionaryWithDictionary({
     setTitle: browserWindow.setTitle.bind(browserWindow),
     emitBrowserEvent: browserWindow.emit.bind(browserWindow),
     emit: browserWindow.webContents.emit.bind(browserWindow.webContents),
+    parseWebArguments: parseWebArguments,
   })
   // reset state as well
-  navigationDelegate.state = NSMutableDictionary.dictionaryWithDictionary({
+  frameLoadDelegate.state = NSMutableDictionary.dictionaryWithDictionary({
+    lastQueryId: null,
     wasReady: 0,
   })
 
-  webview.setNavigationDelegate(navigationDelegate)
-
-  var webScriptHandler = WebScriptHandlerClass.new()
-  webScriptHandler.utils = NSDictionary.dictionaryWithDictionary({
-    emit: browserWindow.webContents.emit.bind(browserWindow.webContents),
-    parseWebArguments: parseWebArguments,
-  })
-
-  webview
-    .configuration()
-    .userContentController()
-    .addScriptMessageHandler_name(webScriptHandler, CONSTANTS.JS_BRIDGE)
+  webview.setFrameLoadDelegate(frameLoadDelegate)
 
   var windowDelegate = WindowDelegateClass.new()
-  var utils = {
+  windowDelegate.utils = NSDictionary.dictionaryWithDictionary({
     emit: browserWindow.emit.bind(browserWindow),
-  }
-  if (options.modal) {
-    // find the window of the document
-    var msdocument
-    if (options.parent.type === 'Document') {
-      msdocument = options.parent.sketchObject
-      if (msdocument && String(msdocument.class()) === 'MSDocumentData') {
-        // we only have an MSDocumentData instead of a MSDocument
-        // let's try to get back to the MSDocument
-        msdocument = msdocument.delegate()
-      }
-    } else {
-      msdocument = options.parent
-    }
-    if (msdocument && String(msdocument.class()) === 'MSDocumentData') {
-      // we only have an MSDocumentData instead of a MSDocument
-      // let's try to get back to the MSDocument
-      msdocument = msdocument.delegate()
-    }
-    utils.parentWindow = msdocument.windowForSheet()
-  }
-
-  windowDelegate.utils = NSDictionary.dictionaryWithDictionary(utils)
-  windowDelegate.panel = panel
+  })
 
   panel.setDelegate(windowDelegate)
 }
@@ -4415,263 +4165,42 @@ module.exports = function(browserWindow, panel, webview, options) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Promise) {var EventEmitter = __webpack_require__(/*! events */ "events")
+var EventEmitter = __webpack_require__(/*! @skpm/events */ "./node_modules/@skpm/events/index.js")
 
 // let's try to match https://github.com/electron/electron/blob/master/docs/api/web-contents.md
 module.exports = function buildAPI(browserWindow, panel, webview) {
   var webContents = new EventEmitter()
 
   webContents.loadURL = browserWindow.loadURL
-
-  webContents.loadFile = function(/* filePath */) {
-    // TODO:
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-
-  webContents.downloadURL = function(/* filePath */) {
-    // TODO:
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-
-  webContents.getURL = function() {
-    return String(webview.url())
-  }
-
-  webContents.getTitle = function() {
-    return String(webview.title())
-  }
-
+  webContents.getURL = webview.mainFrameURL
+  webContents.getTitle = webview.mainFrameTitle
   webContents.isDestroyed = function() {
     // TODO:
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
   }
-
-  webContents.focus = browserWindow.focus
-  webContents.isFocused = browserWindow.isFocused
-
   webContents.isLoading = function() {
-    return !!webview.loading()
+    return webview.loading()
   }
-
-  webContents.isLoadingMainFrame = function() {
-    // TODO:
-    return !!webview.loading()
+  webContents.stop = webview.stopLoading
+  webContents.reload = webview.reload
+  webContents.canGoBack = webview.canGoBack
+  webContents.canGoForward = webview.canGoForward
+  webContents.goBack = webview.goBack
+  webContents.goForward = webview.goForward
+  webContents.executeJavaScript = function(script) {
+    return webview.stringByEvaluatingJavaScriptFromString(script)
   }
-
-  webContents.isWaitingForResponse = function() {
-    return !webview.loading()
+  webContents.undo = function() {
+    webview.undoManager().undo()
   }
-
-  webContents.stop = function() {
-    webview.stopLoading()
+  webContents.redo = function() {
+    webview.undoManager().redo()
   }
-  webContents.reload = function() {
-    webview.reload()
-  }
-  webContents.reloadIgnoringCache = function() {
-    webview.reloadFromOrigin()
-  }
-  webContents.canGoBack = function() {
-    return !!webview.canGoBack()
-  }
-  webContents.canGoForward = function() {
-    return !!webview.canGoForward()
-  }
-  webContents.canGoToOffset = function(offset) {
-    return !!webview.backForwardList().itemAtIndex(offset)
-  }
-  webContents.clearHistory = function() {
-    // TODO:
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-  webContents.goBack = function() {
-    webview.goBack()
-  }
-  webContents.goForward = function() {
-    webview.goForward()
-  }
-  webContents.goToIndex = function(index) {
-    var backForwardList = webview.backForwardList()
-    var backList = backForwardList.backList()
-    var backListLength = backList.count()
-    if (backListLength > index) {
-      webview.loadRequest(NSURLRequest.requestWithURL(backList[index]))
-      return
-    }
-    var forwardList = backForwardList.forwardList()
-    if (forwardList.count() > index - backListLength) {
-      webview.loadRequest(
-        NSURLRequest.requestWithURL(forwardList[index - backListLength])
-      )
-      return
-    }
-    throw new Error('Cannot go to index ' + index)
-  }
-  webContents.goToOffset = function(offset) {
-    if (!webContents.canGoToOffset(offset)) {
-      throw new Error('Cannot go to offset ' + offset)
-    }
-    webview.loadRequest(
-      NSURLRequest.requestWithURL(webview.backForwardList().itemAtIndex(offset))
-    )
-  }
-  webContents.isCrashed = function() {
-    // TODO:
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-  webContents.setUserAgent = function(/* userAgent */) {
-    // TODO:
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-  webContents.getUserAgent = function() {
-    const userAgent = webview.customUserAgent()
-    return userAgent ? String(userAgent) : undefined
-  }
-  webContents.insertCSS = function(css) {
-    var source =
-      "var style = document.createElement('style'); style.innerHTML = " +
-      css.replace(/"/, '\\"') +
-      '; document.head.appendChild(style);'
-    var script = WKUserScript.alloc().initWithSource_injectionTime_forMainFrameOnly(
-      source,
-      0,
-      true
-    )
-    webview
-      .configuration()
-      .userContentController()
-      .addUserScript(script)
-  }
-  webContents.insertJS = function(source) {
-    var script = WKUserScript.alloc().initWithSource_injectionTime_forMainFrameOnly(
-      source,
-      0,
-      true
-    )
-    webview
-      .configuration()
-      .userContentController()
-      .addUserScript(script)
-  }
-  webContents.executeJavaScript = function(script, userGesture, callback) {
-    if (typeof userGesture === 'function') {
-      callback = userGesture
-      userGesture = false
-    }
-    var fiber = coscript.createFiber()
-    return new Promise(function(resolve, reject) {
-      webview.evaluateJavaScript_completionHandler(
-        script,
-        __mocha__.createBlock_function('v28@?0@8c16@"NSError"20', function(
-          result,
-          err
-        ) {
-          var isError =
-            err &&
-            err.class &&
-            (String(err.class()) === 'NSException' ||
-              String(err.class()) === 'NSError')
-          if (callback) {
-            try {
-              callback(isError ? err : null, result)
-            } catch (error) {
-              // /shrug
-            }
-            resolve()
-          } else if (isError) {
-            reject(err)
-          } else {
-            resolve(result)
-          }
-          fiber.cleanup()
-        })
-      )
-    })
-  }
-  webContents.setIgnoreMenuShortcuts = function() {
-    // TODO:??
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-  webContents.setAudioMuted = function(/* muted */) {
-    // TODO:??
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-  webContents.isAudioMuted = function() {
-    // TODO:??
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-  webContents.setZoomFactor = function(factor) {
-    webview.setMagnification_centeredAtPoint(factor, CGPointMake(0, 0))
-  }
-  webContents.getZoomFactor = function(callback) {
-    callback(Number(webview.magnification()))
-  }
-  webContents.setZoomLevel = function(level) {
-    // eslint-disable-next-line no-restricted-properties
-    webContents.setZoomFactor(Math.pow(1.2, level))
-  }
-  webContents.getZoomLevel = function(callback) {
-    // eslint-disable-next-line no-restricted-properties
-    callback(Math.log(Number(webview.magnification())) / Math.log(1.2))
-  }
-  webContents.setVisualZoomLevelLimits = function(/* minimumLevel, maximumLevel */) {
-    // TODO:??
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-  webContents.setLayoutZoomLevelLimits = function(/* minimumLevel, maximumLevel */) {
-    // TODO:??
-    console.warn(
-      'Not implemented yet, please open a PR on https://github.com/skpm/sketch-module-web-view :)'
-    )
-  }
-
-  // TODO:
-  // webContents.undo = function() {
-  //   webview.undoManager().undo()
-  // }
-  // webContents.redo = function() {
-  //   webview.undoManager().redo()
-  // }
-  // webContents.cut = webview.cut
-  // webContents.copy = webview.copy
-  // webContents.paste = webview.paste
-  // webContents.pasteAndMatchStyle = webview.pasteAsRichText
-  // webContents.delete = webview.delete
-  // webContents.replace = webview.replaceSelectionWithText
-
-  webContents.send = function() {
-    const script =
-      'window.postMessage({' +
-      'isSketchMessage: true,' +
-      "origin: '" +
-      String(__command.identifier()) +
-      "'," +
-      'args: ' +
-      JSON.stringify([].slice.call(arguments)) +
-      '}, "*")'
-    webview.evaluateJavaScript_completionHandler(script, null)
-  }
-
+  webContents.cut = webview.cut
+  webContents.copy = webview.copy
+  webContents.paste = webview.paste
+  webContents.pasteAndMatchStyle = webview.pasteAsRichText
+  webContents.delete = webview.delete
+  webContents.replace = webview.replaceSelectionWithText
   webContents.getNativeWebview = function() {
     return webview
   }
@@ -4679,7 +4208,6 @@ module.exports = function buildAPI(browserWindow, panel, webview) {
   browserWindow.webContents = webContents
 }
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/promise-polyfill/lib/index.js */ "./node_modules/promise-polyfill/lib/index.js")))
 
 /***/ }),
 
@@ -4880,32 +4408,35 @@ __webpack_require__.r(__webpack_exports__);
     width: 900,
     height: 700,
     minWidth: 400,
-    minHeight: 400 // Setup webview
+    minHeight: 400
+  }; // Setup webview
 
-  };
   var browserWindow = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
-  browserWindow.once('ready-to-show', function () {
+  browserWindow.once("ready-to-show", function () {
     browserWindow.show();
   });
   var webContents = browserWindow.webContents; // Connect To Webview
 
-  webContents.on('connectToSketch', function () {
+  webContents.on("connectToSketch", function () {
     webContents.executeJavaScript("sketchConnected('".concat(documentId, "')"));
-    var licenseCode = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey('license_code');
-    var licenseEmail = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey('license_email');
+    var licenseCode = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_code");
+    var licenseEmail = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_email");
     webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
   }); // Set Api Key
 
-  webContents.on('setLicense', function (licenseCode, licenseEmail) {
-    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey('license_code', licenseCode);
-    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey('license_email', licenseEmail);
+  webContents.on("setLicense", function (licenseCode, licenseEmail) {
+    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("license_code", licenseCode);
+    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("license_email", licenseEmail);
     webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
   });
-  webContents.on('openFile', function (base64Data) {
+  webContents.on("openFile", function (base64Data) {
     return Object(_resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_3__["default"])(document, base64Data);
+  });
+  webContents.on("openExternalLink", function (url) {
+    return NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url));
   }); // Load webview
 
-  browserWindow.loadURL('http://192.168.0.18:5000/');
+  browserWindow.loadURL("http://192.168.0.18:5000/");
 });
 
 /***/ }),
@@ -4918,17 +4449,6 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 module.exports = require("buffer");
-
-/***/ }),
-
-/***/ "events":
-/*!*************************!*\
-  !*** external "events" ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = require("events");
 
 /***/ }),
 

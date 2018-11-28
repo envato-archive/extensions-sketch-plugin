@@ -19,22 +19,22 @@
     "postinstall": "npm run build && skpm-link"
   },
   "devDependencies": {
-    "@skpm/builder": "^0.5.2",
+    "@skpm/builder": "^0.5.11",
     "@skpm/extract-loader": "^2.0.2",
-    "css-loader": "^1.0.0",
+    "css-loader": "^1.0.1",
     "eslint-plugin-prettier": "^3.0.0",
     "html-loader": "^0.5.5",
     "prettier": "1.14.3",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
   },
   "resources": [
     "resources/**/*.js"
   ],
   "author": "smlparry <samuel.parry@bigpond.com>",
   "dependencies": {
-    "@skpm/fs": "^0.2.0",
-    "sketch-module-web-view": "^1.2.3",
-    "skpm": "^1.1.9"
+    "@skpm/fs": "^0.2.2",
+    "sketch-module-web-view": "^2.1.1",
+    "skpm": "^1.1.10"
   }
 }

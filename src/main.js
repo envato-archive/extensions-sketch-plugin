@@ -59,5 +59,5 @@ export default function(context) {
   );
 
   // Load webview
-  browserWindow.loadURL("http://192.168.0.18:5000/");
+  browserWindow.loadURL("http://192.168.0.12:5000");
 }

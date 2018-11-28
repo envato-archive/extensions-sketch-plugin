@@ -98,26 +98,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
 /* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _processLayers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./processLayers */ "./resources/utils/processLayers.js");
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = (function (parentDocument, documentToImport) {
   var importedDocument = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Document"].open(documentToImport, function (err, importDocument) {
     importDocument.pages.forEach(function (page) {
-      if (page.name === 'Symbols') {
+      if (page.name === "Symbols") {
         var symbolsPage = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Page"].fromNative(page.sketchObject);
         symbolsPage.parent = parentDocument;
         return;
       }
 
       page.layers.forEach(function (layer) {
+        var selectedDocument = parentDocument.selectedPage;
+        var lastArtboard = selectedDocument.layers[selectedDocument.layers.length - 1];
+        var importFrame = {
+          x: 0,
+          y: 0
+        };
+
+        if (lastArtboard) {
+          importFrame.x = lastArtboard.frame.x + lastArtboard.frame.width + 80;
+          importFrame.y = lastArtboard.frame.y;
+        }
+
         var artboard = new sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Artboard"]({
           parent: parentDocument.selectedPage,
           id: layer.id,
           name: layer.name,
-          frame: layer.frame
+          frame: _objectSpread({}, layer.frame, {
+            x: importFrame.x,
+            y: importFrame.y
+          })
         });
         Object(_processLayers__WEBPACK_IMPORTED_MODULE_1__["default"])(layer.layers, artboard);
-        parentDocument.centerOnLayer(layer);
+        parentDocument.centerOnLayer(artboard);
       });
     });
   });

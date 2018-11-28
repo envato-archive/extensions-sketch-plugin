@@ -120,21 +120,33 @@ module.exports.accessSync = function(path, mode) {
 
   switch (mode) {
     case 0:
-      return module.exports.existsSync(path)
+      canAccess = module.exports.existsSync(path)
+      break
     case 1:
-      return Boolean(fileManager.isExecutableFileAtPath(path))
+      canAccess = Boolean(Number(fileManager.isExecutableFileAtPath(path)))
+      break
     case 2:
-      return Boolean(fileManager.isWritableFileAtPath(path))
+      canAccess = Boolean(Number(fileManager.isWritableFileAtPath(path)))
+      break
     case 3:
-      return Boolean(fileManager.isExecutableFileAtPath(path) && fileManager.isWritableFileAtPath(path))
+      canAccess = Boolean(Number(fileManager.isExecutableFileAtPath(path))) && Boolean(Number(fileManager.isWritableFileAtPath(path)))
+      break
     case 4:
-      return Boolean(fileManager.isReadableFileAtPath(path))
+      canAccess = Boolean(Number(fileManager.isReadableFileAtPath(path)))
+      break
     case 5:
-      return Boolean(fileManager.isReadableFileAtPath(path) && fileManager.isExecutableFileAtPath(path))
+      canAccess = Boolean(Number(fileManager.isReadableFileAtPath(path))) && Boolean(Number(fileManager.isExecutableFileAtPath(path)))
+      break
     case 6:
-      return Boolean(fileManager.isReadableFileAtPath(path) && fileManager.isWritableFileAtPath(path))
+      canAccess = Boolean(Number(fileManager.isReadableFileAtPath(path))) && Boolean(Number(fileManager.isWritableFileAtPath(path)))
+      break
     case 7:
-      return Boolean(fileManager.isReadableFileAtPath(path) && fileManager.isWritableFileAtPath(path) && fileManager.isExecutableFileAtPath(path))
+      canAccess = Boolean(Number(fileManager.isReadableFileAtPath(path))) && Boolean(Number(fileManager.isWritableFileAtPath(path))) && Boolean(Number(fileManager.isExecutableFileAtPath(path)))
+      break
+  }
+
+  if (!canAccess) {
+    throw new Error('Can\'t access ' + String(path))
   }
 }
 
@@ -177,7 +189,7 @@ module.exports.copyFileSync = function(path, dest, flags) {
 
 module.exports.existsSync = function(path) {
   var fileManager = NSFileManager.defaultManager()
-  return Boolean(fileManager.fileExistsAtPath(path))
+  return Boolean(Number(fileManager.fileExistsAtPath(path)))
 }
 
 module.exports.linkSync = function(existingPath, newPath) {
@@ -358,7 +370,9 @@ module.exports.utimesSync = function(path, aTime, mTime) {
 module.exports.writeFileSync = function(path, data, options) {
   var encoding = encodingFromOptions(options, 'utf8')
 
-  var nsdata = Buffer.from(data, encoding === 'NSData' || encoding === 'buffer' ? undefined : encoding).toNSData()
+  var nsdata = Buffer.from(
+    data, encoding === 'NSData' || encoding === 'buffer' ? undefined : encoding
+  ).toNSData()
 
   nsdata.writeToFile_atomically(path, true)
 }
@@ -2458,7 +2472,7 @@ g = (function() {
 
 try {
 	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
+	g = g || new Function("return this")();
 } catch (e) {
 	// This works if the window reference is available
 	if (typeof window === "object") g = window;

@@ -2607,34 +2607,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (layers, parent) {
   return layers.map(function (layer) {
     // Group Layer
-    if (layer.type === 'Group') {
+    if (layer.type === "Group") {
       var group = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Group"].fromNative(layer.sketchObject);
       group.parent = parent;
       group.frame = layer.frame;
       return group; // Text Layer
-    } else if (layer.type === 'Text') {
+    } else if (layer.type === "Text") {
       var text = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Text"].fromNative(layer.sketchObject);
       text.parent = parent;
       text.frame = layer.frame;
       return text;
-    } else if (layer.type === 'SymbolInstance') {
+    } else if (layer.type === "SymbolInstance") {
       // TODO: Figure out what to do with symbol masters that dont exist?
       var symbolInstance = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["SymbolInstance"].fromNative(layer.sketchObject);
       symbolInstance.parent = parent;
       symbolInstance.frame = layer.frame;
       return symbolInstance;
-    } else if (layer.type === 'Shape') {
+    } else if (layer.type === "Shape" || layer.type === "ShapePath") {
       var shape = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Shape"].fromNative(layer.sketchObject);
       shape.parent = parent;
       shape.frame = layer.frame;
       return shape;
-    } else if (layer.type === 'Image') {
+    } else if (layer.type === "Image") {
       var image = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Image"].fromNative(layer.sketchObject);
       image.parent = parent;
       image.frame = layer.frame;
       return image;
     } else {
-      console.log('** Unhandled Layer **');
+      console.log("** Unhandled Layer **");
       console.log(layer);
     }
   });

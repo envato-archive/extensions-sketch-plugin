@@ -17,10 +17,8 @@
     ]
   },
   "version": "0.1.0",
-  "name": "elements-sketch-plugin",
-  "identifier": "elements-sketch-plugin",
+  "name": "Envato Elements",
+  "identifier": "Envato Elements",
   "disableCocoaScriptPreprocessor": true,
-  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
-  "author": "smlparry",
-  "authorEmail": "samuel.parry@bigpond.com"
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml"
 }

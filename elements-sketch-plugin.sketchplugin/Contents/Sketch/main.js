@@ -4249,7 +4249,7 @@ module.exports = g;
 /*! exports provided: name, version, engines, skpm, scripts, devDependencies, resources, author, dependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"elements-sketch-plugin","version":"0.1.0","engines":{"sketch":">=3.0"},"skpm":{"name":"elements-sketch-plugin","manifest":"src/manifest.json","main":"elements-sketch-plugin.sketchplugin","assets":["assets/**/*"]},"scripts":{"build":"skpm-build","watch":"skpm-build --watch","start":"skpm-build --watch --run","postinstall":"npm run build && skpm-link"},"devDependencies":{"@skpm/builder":"^0.5.11","@skpm/extract-loader":"^2.0.2","css-loader":"^1.0.1","eslint-plugin-prettier":"^3.0.0","html-loader":"^0.5.5","prettier":"1.14.3","webpack":"^4.26.1","webpack-cli":"^3.1.2"},"resources":["resources/**/*.js"],"author":"smlparry <samuel.parry@bigpond.com>","dependencies":{"@skpm/fs":"^0.2.2","sketch-module-web-view":"1.2.3","skpm":"^1.1.10"}};
+module.exports = {"name":"envato-elements","version":"0.1.0","engines":{"sketch":">=3.0"},"skpm":{"name":"Envato Elements","manifest":"src/manifest.json","main":"elements-sketch-plugin.sketchplugin","assets":["assets/**/*"]},"scripts":{"build":"skpm-build","watch":"skpm-build --watch","start":"skpm-build --watch --run","postinstall":"npm run build && skpm-link"},"devDependencies":{"@skpm/builder":"^0.5.11","@skpm/extract-loader":"^2.0.2","css-loader":"^1.0.1","eslint-plugin-prettier":"^3.0.0","html-loader":"^0.5.5","prettier":"1.14.3","webpack":"^4.26.1","webpack-cli":"^3.1.2"},"resources":["resources/**/*.js"],"author":"Envato <extensions@envato.com","dependencies":{"@skpm/fs":"^0.2.2","sketch-module-web-view":"1.2.3","skpm":"^1.1.10"}};
 
 /***/ }),
 
@@ -4373,34 +4373,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (layers, parent) {
   return layers.map(function (layer) {
     // Group Layer
-    if (layer.type === 'Group') {
+    if (layer.type === "Group") {
       var group = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Group"].fromNative(layer.sketchObject);
       group.parent = parent;
       group.frame = layer.frame;
       return group; // Text Layer
-    } else if (layer.type === 'Text') {
+    } else if (layer.type === "Text") {
       var text = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Text"].fromNative(layer.sketchObject);
       text.parent = parent;
       text.frame = layer.frame;
       return text;
-    } else if (layer.type === 'SymbolInstance') {
+    } else if (layer.type === "SymbolInstance") {
       // TODO: Figure out what to do with symbol masters that dont exist?
       var symbolInstance = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["SymbolInstance"].fromNative(layer.sketchObject);
       symbolInstance.parent = parent;
       symbolInstance.frame = layer.frame;
       return symbolInstance;
-    } else if (layer.type === 'Shape') {
+    } else if (layer.type === "Shape" || layer.type === "ShapePath") {
       var shape = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Shape"].fromNative(layer.sketchObject);
       shape.parent = parent;
       shape.frame = layer.frame;
       return shape;
-    } else if (layer.type === 'Image') {
+    } else if (layer.type === "Image") {
       var image = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Image"].fromNative(layer.sketchObject);
       image.parent = parent;
       image.frame = layer.frame;
       return image;
     } else {
-      console.log('** Unhandled Layer **');
+      console.log("** Unhandled Layer **");
       console.log(layer);
     }
   });
@@ -4470,7 +4470,7 @@ __webpack_require__.r(__webpack_exports__);
     return NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url));
   }); // Load webview
 
-  browserWindow.loadURL("http://192.168.0.12:5000");
+  browserWindow.loadURL("http://localhost:5000");
 });
 
 /***/ }),

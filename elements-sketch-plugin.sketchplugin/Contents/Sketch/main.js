@@ -4428,24 +4428,35 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var GLOB = {
+  browserWindow: null
+};
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   var document = sketch_dom__WEBPACK_IMPORTED_MODULE_2__["Document"].getSelectedDocument();
   var documentId = document.id;
-  var options = {
-    identifier: documentId,
-    show: false,
-    scrollBounce: true,
-    width: 900,
-    height: 700,
-    minWidth: 400,
-    minHeight: 400
-  }; // Setup webview
+  var existingBrowserWindow = sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a.fromId(documentId);
 
-  var browserWindow = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
-  browserWindow.once("ready-to-show", function () {
-    browserWindow.show();
-  });
-  var webContents = browserWindow.webContents; // Connect To Webview
+  if (existingBrowserWindow) {
+    GLOB.browserWindow = existingBrowserWindow;
+    GLOB.browserWindow.show();
+  } else {
+    var options = {
+      identifier: documentId,
+      show: false,
+      scrollBounce: true,
+      width: 900,
+      height: 700,
+      minWidth: 400,
+      minHeight: 400
+    };
+    GLOB.browserWindow = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
+    GLOB.browserWindow.loadURL("http://localhost:5000");
+  }
+
+  var webContents = GLOB.browserWindow.webContents;
+  webContents.on("ready-to-show", function () {
+    GLOB.browserWindow.show();
+  }); // Connect To Webview
 
   webContents.on("connectToSketch", function () {
     webContents.executeJavaScript("sketchConnected('".concat(documentId, "')"));
@@ -4468,9 +4479,7 @@ __webpack_require__.r(__webpack_exports__);
   });
   webContents.on("openExternalLink", function (url) {
     return NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url));
-  }); // Load webview
-
-  browserWindow.loadURL("http://localhost:5000");
+  });
 });
 
 /***/ }),

@@ -4,28 +4,36 @@ import { Document } from "sketch/dom";
 
 import importRemoteFile from "../resources/utils/importRemoteFile";
 
+const GLOB = { browserWindow: null };
+
 export default function(context) {
   const document = Document.getSelectedDocument();
   const documentId = document.id;
 
-  const options = {
-    identifier: documentId,
-    show: false,
-    scrollBounce: true,
-    width: 900,
-    height: 700,
-    minWidth: 400,
-    minHeight: 400
-  };
+  const existingBrowserWindow = BrowserWindow.fromId(documentId);
+  if (existingBrowserWindow) {
+    GLOB.browserWindow = existingBrowserWindow;
+    GLOB.browserWindow.show();
+  } else {
+    const options = {
+      identifier: documentId,
+      show: false,
+      scrollBounce: true,
+      width: 900,
+      height: 700,
+      minWidth: 400,
+      minHeight: 400
+    };
 
-  // Setup webview
-  var browserWindow = new BrowserWindow(options);
+    GLOB.browserWindow = new BrowserWindow(options);
+    GLOB.browserWindow.loadURL("http://localhost:5000");
+  }
 
-  browserWindow.once("ready-to-show", () => {
-    browserWindow.show();
+  const webContents = GLOB.browserWindow.webContents;
+
+  webContents.on("ready-to-show", () => {
+    GLOB.browserWindow.show();
   });
-
-  const webContents = browserWindow.webContents;
 
   // Connect To Webview
   webContents.on("connectToSketch", () => {
@@ -57,7 +65,4 @@ export default function(context) {
   webContents.on("openExternalLink", url =>
     NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url))
   );
-
-  // Load webview
-  browserWindow.loadURL("http://localhost:5000");
 }

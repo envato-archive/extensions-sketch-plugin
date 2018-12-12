@@ -17,7 +17,7 @@ export default function(context) {
   } else {
     const options = {
       identifier: documentId,
-      show: false,
+      show: true,
       scrollBounce: true,
       width: 900,
       height: 700,
@@ -26,7 +26,9 @@ export default function(context) {
     };
 
     GLOB.browserWindow = new BrowserWindow(options);
-    GLOB.browserWindow.loadURL("http://localhost:5000");
+    GLOB.browserWindow.loadURL(
+      "http://sketch.envatoextensions.com/webapp/index.html"
+    );
   }
 
   const webContents = GLOB.browserWindow.webContents;

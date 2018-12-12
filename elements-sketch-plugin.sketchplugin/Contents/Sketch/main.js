@@ -4442,7 +4442,7 @@ var GLOB = {
   } else {
     var options = {
       identifier: documentId,
-      show: false,
+      show: true,
       scrollBounce: true,
       width: 900,
       height: 700,
@@ -4450,7 +4450,7 @@ var GLOB = {
       minHeight: 400
     };
     GLOB.browserWindow = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
-    GLOB.browserWindow.loadURL("http://localhost:5000");
+    GLOB.browserWindow.loadURL("http://sketch.envatoextensions.com/webapp/index.html");
   }
 
   var webContents = GLOB.browserWindow.webContents;

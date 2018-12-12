@@ -1,6 +1,8 @@
 {
   "name": "envato-elements",
+  "description": "Envato Elements Sketch plugin makes it easy to import a select range of Web and Mobile UI Kits from Envato Elements!",
   "version": "0.1.0",
+  "repository": "https://github.com/envato/extensions-sketch-plugin",
   "engines": {
     "sketch": ">=3.0"
   },

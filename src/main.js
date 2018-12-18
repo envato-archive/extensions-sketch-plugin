@@ -4,7 +4,13 @@ import { Document } from "sketch/dom";
 
 import importRemoteFile from "../resources/utils/importRemoteFile";
 
-const GLOB = { browserWindow: null };
+const GLOB = {
+  URL:
+    process.env.ENV === "development"
+      ? "http://localhost:5000"
+      : "http://sketch.envatoextensions.com/webapp/index.html",
+  browserWindow: null
+};
 
 export default function(context) {
   const document = Document.getSelectedDocument();
@@ -26,9 +32,7 @@ export default function(context) {
     };
 
     GLOB.browserWindow = new BrowserWindow(options);
-    GLOB.browserWindow.loadURL(
-      "http://sketch.envatoextensions.com/webapp/index.html"
-    );
+    GLOB.browserWindow.loadURL(GLOB.URL);
   }
 
   const webContents = GLOB.browserWindow.webContents;

@@ -15,9 +15,9 @@
     ]
   },
   "scripts": {
-    "build": "skpm-build",
-    "watch": "skpm-build --watch",
-    "start": "skpm-build --watch --run",
+    "build": "ENV=production skpm-build",
+    "watch": "ENV=development skpm-build --watch",
+    "start": "ENV=development skpm-build --watch --run",
     "postinstall": "npm run build && skpm-link"
   },
   "devDependencies": {

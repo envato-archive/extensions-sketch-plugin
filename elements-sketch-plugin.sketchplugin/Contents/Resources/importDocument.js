@@ -1,13 +1,210 @@
-!function(e){var r={};function t(n){if(r[n])return r[n].exports;var o=r[n]={i:n,l:!1,exports:{}};return e[n].call(o.exports,o,o.exports,t),o.l=!0,o.exports}t.m=e,t.c=r,t.d=function(e,r,n){t.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:n})},t.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},t.t=function(e,r){if(1&r&&(e=t(e)),8&r)return e;if(4&r&&"object"==typeof e&&e&&e.__esModule)return e;var n=Object.create(null);if(t.r(n),Object.defineProperty(n,"default",{enumerable:!0,value:e}),2&r&&"string"!=typeof e)for(var o in e)t.d(n,o,function(r){return e[r]}.bind(null,o));return n},t.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(r,"a",r),r},t.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},t.p="",t(t.s="./resources/utils/importDocument.js")}({"./resources/utils/importDocument.js":
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./resources/utils/importDocument.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./resources/utils/importDocument.js":
 /*!*******************************************!*\
   !*** ./resources/utils/importDocument.js ***!
   \*******************************************/
-/*! exports provided: default */function(e,r,t){"use strict";t.r(r);var n=t(/*! sketch/dom */"sketch/dom"),o=t(/*! ./processLayers */"./resources/utils/processLayers.js");function a(e,r,t){return r in e?Object.defineProperty(e,r,{value:t,enumerable:!0,configurable:!0,writable:!0}):e[r]=t,e}r.default=function(e,r){n.Document.open(r,function(r,t){t.pages.forEach(function(r){"Symbols"!==r.name?r.layers.forEach(function(r){var t=e.selectedPage,c=t.layers[t.layers.length-1],u={x:0,y:0};c&&(u.x=c.frame.x+c.frame.width+80,u.y=c.frame.y);var f=new n.Artboard({parent:e.selectedPage,id:r.id,name:r.name,frame:function(e){for(var r=1;r<arguments.length;r++){var t=null!=arguments[r]?arguments[r]:{},n=Object.keys(t);"function"==typeof Object.getOwnPropertySymbols&&(n=n.concat(Object.getOwnPropertySymbols(t).filter(function(e){return Object.getOwnPropertyDescriptor(t,e).enumerable}))),n.forEach(function(r){a(e,r,t[r])})}return e}({},r.frame,{x:u.x,y:u.y})});Object(o.default)(r.layers,f),e.centerOnLayer(f)}):n.Page.fromNative(r.sketchObject).parent=e})}).close()}},"./resources/utils/processLayers.js":
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _processLayers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./processLayers */ "./resources/utils/processLayers.js");
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (function (parentDocument, documentToImport) {
+  var importedDocument = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Document"].open(documentToImport, function (err, importDocument) {
+    importDocument.pages.forEach(function (page) {
+      if (page.name === "Symbols") {
+        var symbolsPage = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Page"].fromNative(page.sketchObject);
+        symbolsPage.parent = parentDocument;
+        return;
+      }
+
+      page.layers.forEach(function (layer) {
+        var selectedDocument = parentDocument.selectedPage;
+        var lastArtboard = selectedDocument.layers[selectedDocument.layers.length - 1];
+        var importFrame = {
+          x: 0,
+          y: 0
+        };
+
+        if (lastArtboard) {
+          importFrame.x = lastArtboard.frame.x + lastArtboard.frame.width + 80;
+          importFrame.y = lastArtboard.frame.y;
+        }
+
+        var artboard = new sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Artboard"]({
+          parent: parentDocument.selectedPage,
+          id: layer.id,
+          name: layer.name,
+          frame: _objectSpread({}, layer.frame, {
+            x: importFrame.x,
+            y: importFrame.y
+          })
+        });
+        Object(_processLayers__WEBPACK_IMPORTED_MODULE_1__["default"])(layer.layers, artboard);
+        parentDocument.centerOnLayer(artboard);
+      });
+    });
+  });
+  importedDocument.close();
+});
+
+/***/ }),
+
+/***/ "./resources/utils/processLayers.js":
 /*!******************************************!*\
   !*** ./resources/utils/processLayers.js ***!
   \******************************************/
-/*! exports provided: default */function(e,r,t){"use strict";t.r(r);var n=t(/*! sketch/dom */"sketch/dom");r.default=function(e,r){return e.map(function(e){if("Group"===e.type){var t=n.Group.fromNative(e.sketchObject);return t.parent=r,t.frame=e.frame,t}if("Text"===e.type){var o=n.Text.fromNative(e.sketchObject);return o.parent=r,o.frame=e.frame,o}if("SymbolInstance"===e.type){var a=n.SymbolInstance.fromNative(e.sketchObject);return a.parent=r,a.frame=e.frame,a}if("Shape"===e.type||"ShapePath"===e.type){var c=n.Shape.fromNative(e.sketchObject);return c.parent=r,c.frame=e.frame,c}if("Image"===e.type){var u=n.Image.fromNative(e.sketchObject);return u.parent=r,u.frame=e.frame,u}console.log("** Unhandled Layer **"),console.log(e)})}},"sketch/dom":
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ __webpack_exports__["default"] = (function (layers, parent) {
+  return layers.map(function (layer) {
+    // Group Layer
+    if (layer.type === "Group") {
+      var group = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Group"].fromNative(layer.sketchObject);
+      group.parent = parent;
+      group.frame = layer.frame;
+      return group; // Text Layer
+    } else if (layer.type === "Text") {
+      var text = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Text"].fromNative(layer.sketchObject);
+      text.parent = parent;
+      text.frame = layer.frame;
+      return text;
+    } else if (layer.type === "SymbolInstance") {
+      // TODO: Figure out what to do with symbol masters that dont exist?
+      var symbolInstance = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["SymbolInstance"].fromNative(layer.sketchObject);
+      symbolInstance.parent = parent;
+      symbolInstance.frame = layer.frame;
+      return symbolInstance;
+    } else if (layer.type === "Shape" || layer.type === "ShapePath") {
+      var shape = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Shape"].fromNative(layer.sketchObject);
+      shape.parent = parent;
+      shape.frame = layer.frame;
+      return shape;
+    } else if (layer.type === "Image") {
+      var image = sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Image"].fromNative(layer.sketchObject);
+      image.parent = parent;
+      image.frame = layer.frame;
+      return image;
+    } else {
+      console.log("** Unhandled Layer **");
+      console.log(layer);
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "sketch/dom":
 /*!*****************************!*\
   !*** external "sketch/dom" ***!
   \*****************************/
-/*! no static exports found */function(e,r){e.exports=require("sketch/dom")}});
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("sketch/dom");
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=importDocument.js.map

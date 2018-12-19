@@ -4429,9 +4429,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var GLOB = {
-  URL:  false ? undefined : "http://sketch.envatoextensions.com/webapp/index.html",
+  URL:  true ? "http://localhost:5000" : undefined,
   browserWindow: null,
-  browserTitle:  false ? undefined : "Envato Elements"
+  browserTitle:  true ? "Envato Elements DEV" : undefined
 };
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   var document = sketch_dom__WEBPACK_IMPORTED_MODULE_2__["Document"].getSelectedDocument();

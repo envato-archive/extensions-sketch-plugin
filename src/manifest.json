@@ -2,6 +2,8 @@
   "compatibleVersion": 3,
   "bundleVersion": 1,
   "icon": "icon.png",
+  "author": "Envato Elements",
+  "authorEmail": "extensions@envato.com",
   "commands": [
     {
       "name": "Envato Elements",

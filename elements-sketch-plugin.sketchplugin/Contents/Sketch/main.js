@@ -4429,8 +4429,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var GLOB = {
-  URL:  true ? "http://localhost:5000" : undefined,
-  browserWindow: null
+  URL:  false ? undefined : "http://sketch.envatoextensions.com/webapp/index.html",
+  browserWindow: null,
+  browserTitle:  false ? undefined : "Envato Elements"
 };
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   var document = sketch_dom__WEBPACK_IMPORTED_MODULE_2__["Document"].getSelectedDocument();
@@ -4448,7 +4449,8 @@ var GLOB = {
       width: 900,
       height: 700,
       minWidth: 400,
-      minHeight: 400
+      minHeight: 400,
+      title: GLOB.browserTitle
     };
     GLOB.browserWindow = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
     GLOB.browserWindow.loadURL(GLOB.URL);

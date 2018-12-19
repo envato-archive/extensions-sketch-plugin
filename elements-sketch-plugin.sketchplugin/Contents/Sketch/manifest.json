@@ -6,7 +6,8 @@
     {
       "name": "Envato Elements",
       "identifier": "open-window",
-      "script": "main.js"
+      "script": "main.js",
+      "shortcut": "cmd shift u"
     }
   ],
   "menu": {

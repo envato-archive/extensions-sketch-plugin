@@ -9,7 +9,11 @@ const GLOB = {
     process.env.ENV === "development"
       ? "http://localhost:5000"
       : "http://sketch.envatoextensions.com/webapp/index.html",
-  browserWindow: null
+  browserWindow: null,
+  browserTitle:
+    process.env.ENV === "development"
+      ? "Envato Elements DEV"
+      : "Envato Elements"
 };
 
 export default function(context) {
@@ -28,7 +32,8 @@ export default function(context) {
       width: 900,
       height: 700,
       minWidth: 400,
-      minHeight: 400
+      minHeight: 400,
+      title: GLOB.browserTitle
     };
 
     GLOB.browserWindow = new BrowserWindow(options);

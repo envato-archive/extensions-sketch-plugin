@@ -652,6 +652,90 @@ module.exports.writeFileSync = function(path, data, options) {
 
 /***/ }),
 
+/***/ "./node_modules/@skpm/timers/test-if-fiber.js":
+/*!****************************************************!*\
+  !*** ./node_modules/@skpm/timers/test-if-fiber.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function () {
+  return typeof coscript !== 'undefined' && coscript.createFiber
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/@skpm/timers/timeout.js":
+/*!**********************************************!*\
+  !*** ./node_modules/@skpm/timers/timeout.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* globals coscript, sketch */
+var fiberAvailable = __webpack_require__(/*! ./test-if-fiber */ "./node_modules/@skpm/timers/test-if-fiber.js")
+
+var setTimeout
+var clearTimeout
+
+var fibers = []
+
+if (fiberAvailable()) {
+  var fibers = []
+
+  setTimeout = function (func, delay, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
+    // fibers takes care of keeping coscript around
+    var id = fibers.length
+    fibers.push(coscript.scheduleWithInterval_jsFunction(
+      (delay || 0) / 1000,
+      function () {
+        func(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
+      }
+    ))
+    return id
+  }
+
+  clearTimeout = function (id) {
+    var timeout = fibers[id]
+    if (timeout) {
+      timeout.cancel() // fibers takes care of keeping coscript around
+      fibers[id] = undefined // garbage collect the fiber
+    }
+  }
+} else {
+  setTimeout = function (func, delay, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
+    coscript.shouldKeepAround = true
+    var id = fibers.length
+    fibers.push(true)
+    coscript.scheduleWithInterval_jsFunction(
+      (delay || 0) / 1000,
+      function () {
+        if (fibers[id]) { // if not cleared
+          func(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
+        }
+        clearTimeout(id)
+        if (fibers.every(function (_id) { return !_id })) { // if everything is cleared
+          coscript.shouldKeepAround = false
+        }
+      }
+    )
+    return id
+  }
+
+  clearTimeout = function (id) {
+    fibers[id] = false
+  }
+}
+
+module.exports = {
+  setTimeout: setTimeout,
+  clearTimeout: clearTimeout
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/base64-js/index.js":
 /*!*****************************************!*\
   !*** ./node_modules/base64-js/index.js ***!
@@ -4253,6 +4337,17 @@ module.exports = {"name":"envato-elements","description":"Envato Elements Sketch
 
 /***/ }),
 
+/***/ "./resources/loading.html":
+/*!********************************!*\
+  !*** ./resources/loading.html ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "file://" + context.plugin.urlForResourceNamed("_webpack_resources/f3350a197d7c5b0e5d38d140a3b097b2.html").path();
+
+/***/ }),
+
 /***/ "./resources/utils/importDocument.js":
 /*!*******************************************!*\
   !*** ./resources/utils/importDocument.js ***!
@@ -4417,20 +4512,25 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch-module-web-view */ "./node_modules/sketch-module-web-view/lib/index.js");
+/* WEBPACK VAR INJECTION */(function(setTimeout) {/* harmony import */ var sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch-module-web-view */ "./node_modules/sketch-module-web-view/lib/index.js");
 /* harmony import */ var sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var sketch_settings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sketch/settings */ "sketch/settings");
 /* harmony import */ var sketch_settings__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sketch_settings__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
 /* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../resources/utils/importRemoteFile */ "./resources/utils/importRemoteFile.js");
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
 
 var GLOB = {
-  URL:  false ? undefined : "http://sketch.envatoextensions.com/webapp/index.html",
+  loaderWindow: null,
   browserWindow: null,
+  URL:  false ? undefined : "http://sketch.envatoextensions.com/webapp/index.html",
   browserTitle:  false ? undefined : "Envato Elements"
 };
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
@@ -4442,23 +4542,38 @@ var GLOB = {
     GLOB.browserWindow = existingBrowserWindow;
     GLOB.browserWindow.show();
   } else {
-    var options = {
-      identifier: documentId,
-      show: true,
-      scrollBounce: true,
+    var windowConfig = {
       width: 900,
       height: 700,
       minWidth: 400,
       minHeight: 400,
-      title: GLOB.browserTitle
+      title: GLOB.browserTitle,
+      backgroundColor: "#F8F8FA"
     };
+
+    var loaderOptions = _objectSpread({}, windowConfig, {
+      identifier: "loader-window",
+      show: true
+    });
+
+    var options = _objectSpread({}, windowConfig, {
+      identifier: documentId,
+      show: false,
+      scrollBounce: true
+    });
+
+    GLOB.loaderWindow = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(loaderOptions);
+    GLOB.loaderWindow.loadURL(__webpack_require__(/*! ../resources/loading.html */ "./resources/loading.html"));
     GLOB.browserWindow = new sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a(options);
     GLOB.browserWindow.loadURL(GLOB.URL);
   }
 
   var webContents = GLOB.browserWindow.webContents;
-  webContents.on("ready-to-show", function () {
-    GLOB.browserWindow.show();
+  webContents.once("did-finish-load", function () {
+    setTimeout(function () {
+      GLOB.loaderWindow.hide();
+      GLOB.browserWindow.show();
+    }, 200);
   }); // Connect To Webview
 
   webContents.on("connectToSketch", function () {
@@ -4491,6 +4606,7 @@ var GLOB = {
     return NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url));
   });
 });
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@skpm/timers/timeout.js */ "./node_modules/@skpm/timers/timeout.js")["setTimeout"]))
 
 /***/ }),
 

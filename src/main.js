@@ -5,11 +5,12 @@ import { Document } from "sketch/dom";
 import importRemoteFile from "../resources/utils/importRemoteFile";
 
 const GLOB = {
+  loaderWindow: null,
+  browserWindow: null,
   URL:
     process.env.ENV === "development"
-      ? "http://localhost:5000"
+      ? "http://192.168.0.15:5000"
       : "http://sketch.envatoextensions.com/webapp/index.html",
-  browserWindow: null,
   browserTitle:
     process.env.ENV === "development"
       ? "Envato Elements DEV"
@@ -25,16 +26,28 @@ export default function(context) {
     GLOB.browserWindow = existingBrowserWindow;
     GLOB.browserWindow.show();
   } else {
-    const options = {
-      identifier: documentId,
-      show: true,
-      scrollBounce: true,
+    const windowConfig = {
       width: 900,
       height: 700,
       minWidth: 400,
       minHeight: 400,
-      title: GLOB.browserTitle
+      title: GLOB.browserTitle,
+      backgroundColor: "#F8F8FA"
     };
+    const loaderOptions = {
+      ...windowConfig,
+      identifier: "loader-window",
+      show: true
+    };
+    const options = {
+      ...windowConfig,
+      identifier: documentId,
+      show: false,
+      scrollBounce: true
+    };
+
+    GLOB.loaderWindow = new BrowserWindow(loaderOptions);
+    GLOB.loaderWindow.loadURL(require("../resources/loading.html"));
 
     GLOB.browserWindow = new BrowserWindow(options);
     GLOB.browserWindow.loadURL(GLOB.URL);
@@ -42,8 +55,11 @@ export default function(context) {
 
   const webContents = GLOB.browserWindow.webContents;
 
-  webContents.on("ready-to-show", () => {
-    GLOB.browserWindow.show();
+  webContents.once("did-finish-load", () => {
+    setTimeout(() => {
+      GLOB.loaderWindow.hide();
+      GLOB.browserWindow.show();
+    }, 200);
   });
 
   // Connect To Webview

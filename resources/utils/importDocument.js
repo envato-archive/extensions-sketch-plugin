@@ -15,16 +15,21 @@ export default (parentDocument, documentToImport) => {
 
         page.layers.forEach(layer => {
           const selectedDocument = parentDocument.selectedPage;
-          const lastArtboard =
-            selectedDocument.layers[selectedDocument.layers.length - 1];
 
-          const importFrame = { x: 0, y: 0 };
+          let lastArtboard = null;
+          let largestHypotenuse = 0;
 
-          if (lastArtboard) {
-            importFrame.x =
-              lastArtboard.frame.x + lastArtboard.frame.width + 80;
-            importFrame.y = lastArtboard.frame.y;
-          }
+          selectedDocument.layers.forEach(layer => {
+            // Calculate Hypotenuse from origin
+            const layerOffset = Math.sqrt(
+              Math.pow(layer.frame.y, 2) + Math.pow(layer.frame.x, 2)
+            );
+
+            if (layerOffset > largestHypotenuse) {
+              largestHypotenuse = layerOffset;
+              lastArtboard = layer;
+            }
+          });
 
           const artboard = new Artboard({
             parent: parentDocument.selectedPage,
@@ -32,8 +37,8 @@ export default (parentDocument, documentToImport) => {
             name: layer.name,
             frame: {
               ...layer.frame,
-              x: importFrame.x,
-              y: importFrame.y
+              x: lastArtboard.frame.x + lastArtboard.frame.width + 80,
+              y: lastArtboard.frame.y
             }
           });
 

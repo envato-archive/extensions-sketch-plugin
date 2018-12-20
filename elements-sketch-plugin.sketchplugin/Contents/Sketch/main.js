@@ -4282,24 +4282,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       page.layers.forEach(function (layer) {
         var selectedDocument = parentDocument.selectedPage;
-        var lastArtboard = selectedDocument.layers[selectedDocument.layers.length - 1];
-        var importFrame = {
-          x: 0,
-          y: 0
-        };
+        var lastArtboard = null;
+        var largestHypotenuse = 0;
+        selectedDocument.layers.forEach(function (layer) {
+          // Calculate Hypotenuse from origin
+          var layerOffset = Math.sqrt(Math.pow(layer.frame.y, 2) + Math.pow(layer.frame.x, 2));
 
-        if (lastArtboard) {
-          importFrame.x = lastArtboard.frame.x + lastArtboard.frame.width + 80;
-          importFrame.y = lastArtboard.frame.y;
-        }
-
+          if (layerOffset > largestHypotenuse) {
+            largestHypotenuse = layerOffset;
+            lastArtboard = layer;
+          }
+        });
         var artboard = new sketch_dom__WEBPACK_IMPORTED_MODULE_0__["Artboard"]({
           parent: parentDocument.selectedPage,
           id: layer.id,
           name: layer.name,
           frame: _objectSpread({}, layer.frame, {
-            x: importFrame.x,
-            y: importFrame.y
+            x: lastArtboard.frame.x + lastArtboard.frame.width + 80,
+            y: lastArtboard.frame.y
           })
         });
         Object(_processLayers__WEBPACK_IMPORTED_MODULE_1__["default"])(layer.layers, artboard);

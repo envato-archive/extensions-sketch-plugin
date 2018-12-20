@@ -51,12 +51,16 @@ export default function(context) {
     webContents.executeJavaScript(`sketchConnected('${documentId}')`);
 
     const pluginVersion = require("../package.json").version;
+    webContents.executeJavaScript(`setPluginVersion('${pluginVersion}')`);
+
     const licenseCode = Settings.settingForKey("license_code");
     const licenseEmail = Settings.settingForKey("license_email");
     webContents.executeJavaScript(
       `setLicense('${licenseCode}', '${licenseEmail}')`
     );
-    webContents.executeJavaScript(`setPluginVersion('${pluginVersion}')`);
+
+    const photoResponse = Settings.settingForKey("photo_response");
+    webContents.executeJavaScript(`setPhotoResponse('${photoResponse}')`);
   });
 
   // Set Api Key
@@ -67,6 +71,13 @@ export default function(context) {
     webContents.executeJavaScript(
       `setLicense('${licenseCode}', '${licenseEmail}')`
     );
+  });
+
+  // Record Response
+  webContents.on("setPhotoResponse", response => {
+    Settings.setSettingForKey("photo_response", response);
+
+    webContents.executeJavaScript(`setPhotoResponse('${response}')`);
   });
 
   webContents.on("openFile", base64Data =>

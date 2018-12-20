@@ -4429,9 +4429,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var GLOB = {
-  URL:  true ? "http://localhost:5000" : undefined,
+  URL:  false ? undefined : "http://sketch.envatoextensions.com/webapp/index.html",
   browserWindow: null,
-  browserTitle:  true ? "Envato Elements DEV" : undefined
+  browserTitle:  false ? undefined : "Envato Elements"
 };
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   var document = sketch_dom__WEBPACK_IMPORTED_MODULE_2__["Document"].getSelectedDocument();
@@ -4466,16 +4466,23 @@ var GLOB = {
 
     var pluginVersion = __webpack_require__(/*! ../package.json */ "./package.json").version;
 
+    webContents.executeJavaScript("setPluginVersion('".concat(pluginVersion, "')"));
     var licenseCode = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_code");
     var licenseEmail = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_email");
     webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
-    webContents.executeJavaScript("setPluginVersion('".concat(pluginVersion, "')"));
+    var photoResponse = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("photo_response");
+    webContents.executeJavaScript("setPhotoResponse('".concat(photoResponse, "')"));
   }); // Set Api Key
 
   webContents.on("setLicense", function (licenseCode, licenseEmail) {
     sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("license_code", licenseCode);
     sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("license_email", licenseEmail);
     webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
+  }); // Record Response
+
+  webContents.on("setPhotoResponse", function (response) {
+    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("photo_response", response);
+    webContents.executeJavaScript("setPhotoResponse('".concat(response, "')"));
   });
   webContents.on("openFile", function (base64Data) {
     return Object(_resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_3__["default"])(document, base64Data);

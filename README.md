@@ -1,4 +1,4 @@
-# Envate Elements - Sketch Plugin (Beta)
+# Envato Elements - Sketch Plugin (Beta)
 
 The Envato Elements - Sketch Pluing makes it easy to import a select range of Web and Mobile UI Kits from Envato Elements!
 

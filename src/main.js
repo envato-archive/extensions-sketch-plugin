@@ -9,7 +9,7 @@ const GLOB = {
   browserWindow: null,
   URL:
     process.env.ENV === "development"
-      ? "http://192.168.0.15:5000"
+      ? "http://localhost:5000"
       : "http://sketch.envatoextensions.com/webapp/index.html",
   browserTitle:
     process.env.ENV === "development"

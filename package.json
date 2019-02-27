@@ -7,7 +7,7 @@
     "sketch": ">=3.0"
   },
   "skpm": {
-    "name": "Envato Elements",
+    "name": "Envato Elements - Beta",
     "manifest": "src/manifest.json",
     "main": "elements-sketch-plugin.sketchplugin",
     "assets": [

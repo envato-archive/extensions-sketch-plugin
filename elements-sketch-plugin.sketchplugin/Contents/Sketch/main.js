@@ -4333,7 +4333,7 @@ module.exports = g;
 /*! exports provided: name, description, version, repository, engines, skpm, scripts, devDependencies, resources, author, dependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"envato-elements","description":"Envato Elements Sketch plugin makes it easy to import a select range of Web and Mobile UI Kits from Envato Elements!","version":"0.1.2","repository":"https://github.com/envato/extensions-sketch-plugin","engines":{"sketch":">=3.0"},"skpm":{"name":"Envato Elements","manifest":"src/manifest.json","main":"elements-sketch-plugin.sketchplugin","assets":["assets/**/*"]},"scripts":{"build":"ENV=production skpm-build","watch":"ENV=development skpm-build --watch","start":"ENV=development skpm-build --watch --run","postinstall":"npm run build && skpm-link"},"devDependencies":{"@skpm/builder":"^0.5.11","@skpm/extract-loader":"^2.0.2","css-loader":"^1.0.1","eslint-plugin-prettier":"^3.0.0","html-loader":"^0.5.5","prettier":"1.14.3","webpack":"^4.26.1","webpack-cli":"^3.1.2"},"resources":["resources/**/*.js"],"author":"Envato <extensions@envato.com","dependencies":{"@skpm/fs":"^0.2.2","sketch-module-web-view":"1.2.3","skpm":"^1.1.10"}};
+module.exports = {"name":"envato-elements","description":"Envato Elements Sketch plugin makes it easy to import a select range of Web and Mobile UI Kits from Envato Elements!","version":"0.1.3","repository":"https://github.com/envato/extensions-sketch-plugin","engines":{"sketch":">=3.0"},"skpm":{"name":"Envato Elements - Beta","manifest":"src/manifest.json","main":"elements-sketch-plugin.sketchplugin","assets":["assets/**/*"]},"scripts":{"build":"ENV=production skpm-build","watch":"ENV=development skpm-build --watch","start":"ENV=development skpm-build --watch --run","postinstall":"npm run build && skpm-link"},"devDependencies":{"@skpm/builder":"^0.5.11","@skpm/extract-loader":"^2.0.2","css-loader":"^1.0.1","eslint-plugin-prettier":"^3.0.0","html-loader":"^0.5.5","prettier":"1.14.3","webpack":"^4.26.1","webpack-cli":"^3.1.2"},"resources":["resources/**/*.js"],"author":"Envato <extensions@envato.com","dependencies":{"@skpm/fs":"^0.2.2","sketch-module-web-view":"1.2.3","skpm":"^1.1.10"}};
 
 /***/ }),
 
@@ -4530,8 +4530,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var GLOB = {
   loaderWindow: null,
   browserWindow: null,
-  URL:  false ? undefined : "http://sketch.envatoextensions.com/webapp/index.html",
-  browserTitle:  false ? undefined : "Envato Elements"
+  URL:  true ? "http://localhost:5000" : undefined,
+  browserTitle:  true ? "Envato Elements DEV" : undefined
 };
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   var document = sketch_dom__WEBPACK_IMPORTED_MODULE_2__["Document"].getSelectedDocument();

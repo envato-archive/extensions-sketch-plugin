@@ -4348,6 +4348,68 @@ module.exports = "file://" + context.plugin.urlForResourceNamed("_webpack_resour
 
 /***/ }),
 
+/***/ "./resources/methods.js":
+/*!******************************!*\
+  !*** ./resources/methods.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var sketch_settings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch/settings */ "sketch/settings");
+/* harmony import */ var sketch_settings__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_settings__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../resources/utils/importRemoteFile */ "./resources/utils/importRemoteFile.js");
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  connectToSketch: function connectToSketch(webContents) {
+    var documentId = sketch_dom__WEBPACK_IMPORTED_MODULE_1__["Document"].getSelectedDocument().id;
+    webContents.executeJavaScript("sketchConnected('".concat(documentId, "')"));
+
+    var pluginVersion = __webpack_require__(/*! ../package.json */ "./package.json").version;
+
+    webContents.executeJavaScript("setPluginVersion('".concat(pluginVersion, "')"));
+    var licenseCode = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.settingForKey("license_code");
+    var licenseEmail = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.settingForKey("license_email");
+    webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
+    var elementsToken = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.settingForKey("elements_token");
+    webContents.executeJavaScript("setElementsToken('".concat(elementsToken, "')"));
+    var photoResponse = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.settingForKey("photo_response");
+    webContents.executeJavaScript("setPhotoResponse('".concat(photoResponse, "')"));
+  },
+  setLicense: function setLicense(webContents, _ref) {
+    var code = _ref.code,
+        email = _ref.email;
+    sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.setSettingForKey("license_code", code);
+    sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.setSettingForKey("license_email", email);
+    webContents.executeJavaScript("setLicense('".concat(code, "', '").concat(email, "')"));
+  },
+  setPhotoResponse: function setPhotoResponse(webContents, _ref2) {
+    var response = _ref2.response;
+    sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.setSettingForKey("photo_response", response);
+    webContents.executeJavaScript("setPhotoResponse('".concat(response, "')"));
+  },
+  importRemoteFile: function importRemoteFile(base64Data) {
+    var document = sketch_dom__WEBPACK_IMPORTED_MODULE_1__["Document"].getSelectedDocument();
+
+    Object(_resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_2__["default"])(document, base64Data);
+  },
+  openExternalLink: function openExternalLink(url) {
+    return NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url));
+  },
+  setElementsToken: function setElementsToken(webContents, _ref3) {
+    var token = _ref3.token;
+    sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.setSettingForKey("elements_token", token);
+    webContents.executeJavaScript("setElementsToken('".concat(token, "')"));
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/utils/importDocument.js":
 /*!*******************************************!*\
   !*** ./resources/utils/importDocument.js ***!
@@ -4514,15 +4576,12 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(setTimeout) {/* harmony import */ var sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sketch-module-web-view */ "./node_modules/sketch-module-web-view/lib/index.js");
 /* harmony import */ var sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var sketch_settings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sketch/settings */ "sketch/settings");
-/* harmony import */ var sketch_settings__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sketch_settings__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
-/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../resources/utils/importRemoteFile */ "./resources/utils/importRemoteFile.js");
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _resources_methods__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../resources/methods */ "./resources/methods.js");
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -4534,7 +4593,7 @@ var GLOB = {
   browserTitle:  true ? "Envato Elements DEV" : undefined
 };
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
-  var document = sketch_dom__WEBPACK_IMPORTED_MODULE_2__["Document"].getSelectedDocument();
+  var document = sketch_dom__WEBPACK_IMPORTED_MODULE_1__["Document"].getSelectedDocument();
   var documentId = document.id;
   var existingBrowserWindow = sketch_module_web_view__WEBPACK_IMPORTED_MODULE_0___default.a.fromId(documentId);
 
@@ -4574,36 +4633,32 @@ var GLOB = {
       GLOB.loaderWindow.hide();
       GLOB.browserWindow.show();
     }, 200);
-  }); // Connect To Webview
+  }); // Method Definitions
 
   webContents.on("connectToSketch", function () {
-    webContents.executeJavaScript("sketchConnected('".concat(documentId, "')"));
-
-    var pluginVersion = __webpack_require__(/*! ../package.json */ "./package.json").version;
-
-    webContents.executeJavaScript("setPluginVersion('".concat(pluginVersion, "')"));
-    var licenseCode = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_code");
-    var licenseEmail = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("license_email");
-    webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
-    var photoResponse = sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.settingForKey("photo_response");
-    webContents.executeJavaScript("setPhotoResponse('".concat(photoResponse, "')"));
-  }); // Set Api Key
-
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].connectToSketch(webContents);
+  });
   webContents.on("setLicense", function (licenseCode, licenseEmail) {
-    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("license_code", licenseCode);
-    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("license_email", licenseEmail);
-    webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
-  }); // Record Response
-
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].setLicense(webContents, {
+      code: licenseCode,
+      email: licenseEmail
+    });
+  });
   webContents.on("setPhotoResponse", function (response) {
-    sketch_settings__WEBPACK_IMPORTED_MODULE_1___default.a.setSettingForKey("photo_response", response);
-    webContents.executeJavaScript("setPhotoResponse('".concat(response, "')"));
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].setPhotoResponse(webContents, {
+      response: response
+    });
+  });
+  webContents.on("setElementsToken", function (token) {
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].setElementsToken(webContents, {
+      token: token
+    });
   });
   webContents.on("openFile", function (base64Data) {
-    return Object(_resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_3__["default"])(document, base64Data);
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].importRemoteFile(base64Data);
   });
   webContents.on("openExternalLink", function (url) {
-    return NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url));
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].openExternalLink(url);
   });
 });
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@skpm/timers/timeout.js */ "./node_modules/@skpm/timers/timeout.js")["setTimeout"]))

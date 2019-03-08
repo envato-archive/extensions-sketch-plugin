@@ -1,8 +1,7 @@
 import BrowserWindow from "sketch-module-web-view";
-import Settings from "sketch/settings";
 import { Document } from "sketch/dom";
 
-import importRemoteFile from "../resources/utils/importRemoteFile";
+import METHODS from "../resources/methods";
 
 const GLOB = {
   loaderWindow: null,
@@ -62,45 +61,19 @@ export default function(context) {
     }, 200);
   });
 
-  // Connect To Webview
-  webContents.on("connectToSketch", () => {
-    webContents.executeJavaScript(`sketchConnected('${documentId}')`);
-
-    const pluginVersion = require("../package.json").version;
-    webContents.executeJavaScript(`setPluginVersion('${pluginVersion}')`);
-
-    const licenseCode = Settings.settingForKey("license_code");
-    const licenseEmail = Settings.settingForKey("license_email");
-    webContents.executeJavaScript(
-      `setLicense('${licenseCode}', '${licenseEmail}')`
-    );
-
-    const photoResponse = Settings.settingForKey("photo_response");
-    webContents.executeJavaScript(`setPhotoResponse('${photoResponse}')`);
-  });
-
-  // Set Api Key
-  webContents.on("setLicense", (licenseCode, licenseEmail) => {
-    Settings.setSettingForKey("license_code", licenseCode);
-    Settings.setSettingForKey("license_email", licenseEmail);
-
-    webContents.executeJavaScript(
-      `setLicense('${licenseCode}', '${licenseEmail}')`
-    );
-  });
-
-  // Record Response
-  webContents.on("setPhotoResponse", response => {
-    Settings.setSettingForKey("photo_response", response);
-
-    webContents.executeJavaScript(`setPhotoResponse('${response}')`);
-  });
-
+  // Method Definitions
+  webContents.on("connectToSketch", () => METHODS.connectToSketch(webContents));
+  webContents.on("setLicense", (licenseCode, licenseEmail) =>
+    METHODS.setLicense(webContents, { code: licenseCode, email: licenseEmail })
+  );
+  webContents.on("setPhotoResponse", response =>
+    METHODS.setPhotoResponse(webContents, { response })
+  );
+  webContents.on("setElementsToken", token =>
+    METHODS.setElementsToken(webContents, { token })
+  );
   webContents.on("openFile", base64Data =>
-    importRemoteFile(document, base64Data)
+    METHODS.importRemoteFile(base64Data)
   );
-
-  webContents.on("openExternalLink", url =>
-    NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url))
-  );
+  webContents.on("openExternalLink", url => METHODS.openExternalLink(url));
 }

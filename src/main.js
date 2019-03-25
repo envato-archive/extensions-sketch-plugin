@@ -75,5 +75,6 @@ export default function(context) {
   webContents.on("openFile", base64Data =>
     METHODS.importRemoteFile(base64Data)
   );
+  webContents.on("openImage", data => METHODS.importImage(data));
   webContents.on("openExternalLink", url => METHODS.openExternalLink(url));
 }

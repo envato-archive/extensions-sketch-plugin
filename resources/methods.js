@@ -2,6 +2,7 @@ import Settings from "sketch/settings";
 import { Document } from "sketch/dom";
 
 import importRemoteFile from "../resources/utils/importRemoteFile";
+import importImage from "./utils/importImage";
 
 export default {
   connectToSketch: webContents => {
@@ -40,6 +41,15 @@ export default {
   importRemoteFile: base64Data => {
     const document = Document.getSelectedDocument();
     importRemoteFile(document, base64Data);
+  },
+
+  importImage: data => {
+    const document = Document.getSelectedDocument();
+    importImage(document, {
+      image: data.image,
+      height: data.height,
+      width: data.width
+    });
   },
 
   openExternalLink: url =>

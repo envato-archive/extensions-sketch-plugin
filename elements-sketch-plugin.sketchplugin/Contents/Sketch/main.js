@@ -4362,6 +4362,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
 /* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../resources/utils/importRemoteFile */ "./resources/utils/importRemoteFile.js");
+/* harmony import */ var _utils_importImage__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils/importImage */ "./resources/utils/importImage.js");
+
 
 
 
@@ -4397,6 +4399,15 @@ __webpack_require__.r(__webpack_exports__);
     var document = sketch_dom__WEBPACK_IMPORTED_MODULE_1__["Document"].getSelectedDocument();
 
     Object(_resources_utils_importRemoteFile__WEBPACK_IMPORTED_MODULE_2__["default"])(document, base64Data);
+  },
+  importImage: function importImage(data) {
+    var document = sketch_dom__WEBPACK_IMPORTED_MODULE_1__["Document"].getSelectedDocument();
+
+    Object(_utils_importImage__WEBPACK_IMPORTED_MODULE_3__["default"])(document, {
+      image: data.image,
+      height: data.height,
+      width: data.width
+    });
   },
   openExternalLink: function openExternalLink(url) {
     return NSWorkspace.sharedWorkspace().openURL(NSURL.URLWithString(url));
@@ -4469,6 +4480,67 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
+/***/ "./resources/utils/importImage.js":
+/*!****************************************!*\
+  !*** ./resources/utils/importImage.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(Buffer) {/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! os */ "os");
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _skpm_fs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @skpm/fs */ "./node_modules/@skpm/fs/index.js");
+/* harmony import */ var _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_skpm_fs__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! sketch/dom */ "sketch/dom");
+/* harmony import */ var sketch_dom__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(sketch_dom__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORTED_MODULE_0___default.a.tmpdir(), "com.sketchapp.envato-sketch-plugin");
+/* harmony default export */ __webpack_exports__["default"] = (function (parentDocument, data) {
+  console.log(data);
+  var guid = NSProcessInfo.processInfo().globallyUniqueString();
+  var outputPath = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(FOLDER, "".concat(guid, ".jpg"));
+  var buffer = new Buffer(data.image, "base64");
+
+  try {
+    _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.mkdirSync(FOLDER);
+  } catch (err) {// probably because the folder already exists
+  }
+
+  try {
+    _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.writeFileSync(outputPath, buffer, "NSData");
+    console.log(parentDocument.pages);
+    console.log(outputPath);
+    var artboard = new sketch_dom__WEBPACK_IMPORTED_MODULE_3__["Artboard"]({
+      parent: parentDocument.pages[0],
+      frame: {
+        width: data.width,
+        height: data.height
+      }
+    });
+    new sketch_dom__WEBPACK_IMPORTED_MODULE_3__["Image"]({
+      image: outputPath,
+      parent: artboard,
+      frame: {
+        width: data.width,
+        height: data.height
+      }
+    });
+  } catch (err) {
+    console.log(err.message);
+    return undefined;
+  }
+});
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/buffer/index.js */ "./node_modules/buffer/index.js").Buffer))
+
+/***/ }),
+
 /***/ "./resources/utils/importRemoteFile.js":
 /*!*********************************************!*\
   !*** ./resources/utils/importRemoteFile.js ***!
@@ -4489,11 +4561,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORTED_MODULE_0___default.a.tmpdir(), 'com.sketchapp.envato-sketch-plugin');
+var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORTED_MODULE_0___default.a.tmpdir(), "com.sketchapp.envato-sketch-plugin");
 /* harmony default export */ __webpack_exports__["default"] = (function (parentDocument, base64Data) {
   var guid = NSProcessInfo.processInfo().globallyUniqueString();
   var outputPath = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(FOLDER, "".concat(guid, ".sketch"));
-  var buffer = new Buffer(base64Data, 'base64');
+  var buffer = new Buffer(base64Data, "base64");
 
   try {
     _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.mkdirSync(FOLDER);
@@ -4504,7 +4576,7 @@ var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORT
     _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.writeFileSync(outputPath, buffer);
     Object(_importDocument__WEBPACK_IMPORTED_MODULE_3__["default"])(parentDocument, outputPath);
     _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.unlinkSync(outputPath, function (err) {
-      if (err) console.log('Error Deleting File.');
+      if (err) console.log("Error Deleting File.");
     });
   } catch (err) {
     console.log(err.message);
@@ -4656,6 +4728,9 @@ var GLOB = {
   });
   webContents.on("openFile", function (base64Data) {
     return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].importRemoteFile(base64Data);
+  });
+  webContents.on("openImage", function (data) {
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].importImage(data);
   });
   webContents.on("openExternalLink", function (url) {
     return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].openExternalLink(url);

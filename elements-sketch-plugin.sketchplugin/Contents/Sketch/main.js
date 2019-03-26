@@ -4406,7 +4406,8 @@ __webpack_require__.r(__webpack_exports__);
     Object(_utils_importImage__WEBPACK_IMPORTED_MODULE_3__["default"])(document, {
       image: data.image,
       height: data.height,
-      width: data.width
+      width: data.width,
+      ext: data.ext
     });
   },
   openExternalLink: function openExternalLink(url) {
@@ -4503,9 +4504,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORTED_MODULE_0___default.a.tmpdir(), "com.sketchapp.envato-sketch-plugin");
 /* harmony default export */ __webpack_exports__["default"] = (function (parentDocument, data) {
-  console.log(data);
   var guid = NSProcessInfo.processInfo().globallyUniqueString();
-  var outputPath = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(FOLDER, "".concat(guid, ".jpg"));
+  var outputPath = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(FOLDER, "".concat(guid, ".").concat(data.ext));
   var buffer = new Buffer(data.image, "base64");
 
   try {
@@ -4515,8 +4515,6 @@ var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORT
 
   try {
     _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.writeFileSync(outputPath, buffer, "NSData");
-    console.log(parentDocument.pages);
-    console.log(outputPath);
     var artboard = new sketch_dom__WEBPACK_IMPORTED_MODULE_3__["Artboard"]({
       parent: parentDocument.pages[0],
       frame: {

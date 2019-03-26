@@ -48,7 +48,8 @@ export default {
     importImage(document, {
       image: data.image,
       height: data.height,
-      width: data.width
+      width: data.width,
+      ext: data.ext
     });
   },
 

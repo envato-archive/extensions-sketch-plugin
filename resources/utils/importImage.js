@@ -6,9 +6,8 @@ import { Artboard, Image } from "sketch/dom";
 const FOLDER = path.join(os.tmpdir(), "com.sketchapp.envato-sketch-plugin");
 
 export default (parentDocument, data) => {
-  console.log(data);
   const guid = NSProcessInfo.processInfo().globallyUniqueString();
-  const outputPath = path.join(FOLDER, `${guid}.jpg`);
+  const outputPath = path.join(FOLDER, `${guid}.${data.ext}`);
   const buffer = new Buffer(data.image, "base64");
 
   try {
@@ -18,9 +17,6 @@ export default (parentDocument, data) => {
   }
   try {
     fs.writeFileSync(outputPath, buffer, "NSData");
-    console.log(parentDocument.pages);
-    console.log(outputPath);
-
     const artboard = new Artboard({
       parent: parentDocument.pages[0],
       frame: {

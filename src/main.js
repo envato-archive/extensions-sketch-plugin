@@ -66,6 +66,9 @@ export default function(context) {
   webContents.on("setLicense", (licenseCode, licenseEmail) =>
     METHODS.setLicense(webContents, { code: licenseCode, email: licenseEmail })
   );
+  webContents.on("setProjectName", name =>
+    METHODS.setProjectName(webContents, name)
+  );
   webContents.on("setPhotoResponse", response =>
     METHODS.setPhotoResponse(webContents, { response })
   );

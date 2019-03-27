@@ -21,8 +21,17 @@ export default {
     const elementsToken = Settings.settingForKey("elements_token");
     webContents.executeJavaScript(`setElementsToken('${elementsToken}')`);
 
+    const projectName = Settings.documentSettingForKey("project_name");
+    webContents.executeJavaScript(`setProjectName('${projectName}')`);
+
     const photoResponse = Settings.settingForKey("photo_response");
     webContents.executeJavaScript(`setPhotoResponse('${photoResponse}')`);
+  },
+
+  setProjectName: (webContents, name) => {
+    Settings.setDocumentSettingForKey("project_name", name);
+
+    webContents.executeJavaScript(`setProjectName('${name}')`);
   },
 
   setLicense: (webContents, { code, email }) => {

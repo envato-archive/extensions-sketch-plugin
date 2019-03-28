@@ -4369,7 +4369,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   connectToSketch: function connectToSketch(webContents) {
-    var documentId = sketch_dom__WEBPACK_IMPORTED_MODULE_1__["Document"].getSelectedDocument().id;
+    var currentDocument = sketch_dom__WEBPACK_IMPORTED_MODULE_1__["Document"].getSelectedDocument();
+    var documentId = currentDocument.id;
     webContents.executeJavaScript("sketchConnected('".concat(documentId, "')"));
 
     var pluginVersion = __webpack_require__(/*! ../package.json */ "./package.json").version;
@@ -4380,13 +4381,13 @@ __webpack_require__.r(__webpack_exports__);
     webContents.executeJavaScript("setLicense('".concat(licenseCode, "', '").concat(licenseEmail, "')"));
     var elementsToken = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.settingForKey("elements_token");
     webContents.executeJavaScript("setElementsToken('".concat(elementsToken, "')"));
-    var projectName = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.documentSettingForKey("project_name");
+    var projectName = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.documentSettingForKey(currentDocument, "project_name");
     webContents.executeJavaScript("setProjectName('".concat(projectName, "')"));
     var photoResponse = sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.settingForKey("photo_response");
     webContents.executeJavaScript("setPhotoResponse('".concat(photoResponse, "')"));
   },
-  setProjectName: function setProjectName(webContents, name) {
-    sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.setDocumentSettingForKey("project_name", name);
+  setProjectName: function setProjectName(webContents, document, name) {
+    sketch_settings__WEBPACK_IMPORTED_MODULE_0___default.a.setDocumentSettingForKey(document, "project_name", name);
     webContents.executeJavaScript("setProjectName('".concat(name, "')"));
   },
   setLicense: function setLicense(webContents, _ref) {
@@ -4721,7 +4722,7 @@ var GLOB = {
     });
   });
   webContents.on("setProjectName", function (name) {
-    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].setProjectName(webContents, name);
+    return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].setProjectName(webContents, document, name);
   });
   webContents.on("setPhotoResponse", function (response) {
     return _resources_methods__WEBPACK_IMPORTED_MODULE_2__["default"].setPhotoResponse(webContents, {

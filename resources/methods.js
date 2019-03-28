@@ -6,7 +6,8 @@ import importImage from "./utils/importImage";
 
 export default {
   connectToSketch: webContents => {
-    const documentId = Document.getSelectedDocument().id;
+    const currentDocument = Document.getSelectedDocument();
+    const documentId = currentDocument.id;
     webContents.executeJavaScript(`sketchConnected('${documentId}')`);
 
     const pluginVersion = require("../package.json").version;
@@ -21,15 +22,18 @@ export default {
     const elementsToken = Settings.settingForKey("elements_token");
     webContents.executeJavaScript(`setElementsToken('${elementsToken}')`);
 
-    const projectName = Settings.documentSettingForKey("project_name");
+    const projectName = Settings.documentSettingForKey(
+      currentDocument,
+      "project_name"
+    );
     webContents.executeJavaScript(`setProjectName('${projectName}')`);
 
     const photoResponse = Settings.settingForKey("photo_response");
     webContents.executeJavaScript(`setPhotoResponse('${photoResponse}')`);
   },
 
-  setProjectName: (webContents, name) => {
-    Settings.setDocumentSettingForKey("project_name", name);
+  setProjectName: (webContents, document, name) => {
+    Settings.setDocumentSettingForKey(document, "project_name", name);
 
     webContents.executeJavaScript(`setProjectName('${name}')`);
   },

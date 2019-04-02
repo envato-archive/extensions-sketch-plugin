@@ -2566,11 +2566,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORTED_MODULE_0___default.a.tmpdir(), 'com.sketchapp.envato-sketch-plugin');
+var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORTED_MODULE_0___default.a.tmpdir(), "com.sketchapp.envato-sketch-plugin");
 /* harmony default export */ __webpack_exports__["default"] = (function (parentDocument, base64Data) {
   var guid = NSProcessInfo.processInfo().globallyUniqueString();
   var outputPath = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(FOLDER, "".concat(guid, ".sketch"));
-  var buffer = new Buffer(base64Data, 'base64');
+  var buffer = new Buffer(base64Data, "base64");
 
   try {
     _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.mkdirSync(FOLDER);
@@ -2581,7 +2581,7 @@ var FOLDER = path__WEBPACK_IMPORTED_MODULE_1___default.a.join(os__WEBPACK_IMPORT
     _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.writeFileSync(outputPath, buffer);
     Object(_importDocument__WEBPACK_IMPORTED_MODULE_3__["default"])(parentDocument, outputPath);
     _skpm_fs__WEBPACK_IMPORTED_MODULE_2___default.a.unlinkSync(outputPath, function (err) {
-      if (err) console.log('Error Deleting File.');
+      if (err) console.log("Error Deleting File.");
     });
   } catch (err) {
     console.log(err.message);

@@ -41,6 +41,8 @@ export default (parentDocument, data) => {
       parent: artboard,
       frame: { width, height }
     });
+
+    parentDocument.centerOnLayer(artboard);
   } catch (err) {
     console.log(err.message);
     return undefined;

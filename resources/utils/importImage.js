@@ -24,8 +24,10 @@ export default (parentDocument, data) => {
     const height = data.height * heightFactor;
     const width = IMPORT_IMAGE_WIDTH;
 
+    const importPage = parentDocument.selectedPage || parentDocument.pages[0];
+
     const artboard = new Artboard({
-      parent: parentDocument.pages[0],
+      parent: importPage,
       frame: { width, height }
     });
     new Image({

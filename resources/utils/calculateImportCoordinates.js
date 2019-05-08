@@ -14,5 +14,8 @@ export default document => {
     }
   });
 
-  return lastArtboard;
+  return {
+    x: lastArtboard.frame.x + lastArtboard.frame.width + 80,
+    y: lastArtboard.frame.y
+  };
 };

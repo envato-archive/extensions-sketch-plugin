@@ -1,7 +1,7 @@
 import { Document, Artboard, Page } from "sketch/dom";
 
 import processLayers from "./processLayers";
-import getLastArtboard from "./getLastArtboard";
+import calculateImportCoordinates from "./calculateImportCoordinates";
 
 export default (parentDocument, documentToImport) => {
   const importedDocument = Document.open(
@@ -17,7 +17,7 @@ export default (parentDocument, documentToImport) => {
         page.layers.forEach(layer => {
           const selectedDocument = parentDocument.selectedPage;
 
-          const lastArtboard = getLastArtboard(selectedDocument);
+          const coordinates = calculateImportCoordinates(selectedDocument);
 
           const artboard = new Artboard({
             parent: parentDocument.selectedPage,
@@ -25,8 +25,8 @@ export default (parentDocument, documentToImport) => {
             name: layer.name,
             frame: {
               ...layer.frame,
-              x: lastArtboard.frame.x + lastArtboard.frame.width + 80,
-              y: lastArtboard.frame.y
+              x: coordinates.x,
+              y: coordinates.y
             }
           });
 

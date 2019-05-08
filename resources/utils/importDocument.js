@@ -1,6 +1,7 @@
 import { Document, Artboard, Page } from "sketch/dom";
 
 import processLayers from "./processLayers";
+import getLastArtboard from "./getLastArtboard";
 
 export default (parentDocument, documentToImport) => {
   const importedDocument = Document.open(
@@ -16,20 +17,9 @@ export default (parentDocument, documentToImport) => {
         page.layers.forEach(layer => {
           const selectedDocument = parentDocument.selectedPage;
 
-          let lastArtboard = null;
-          let largestHypotenuse = 0;
+          const lastArtboard = getLastArtboard(selectedDocument);
 
-          selectedDocument.layers.forEach(layer => {
-            // Calculate Hypotenuse from origin
-            const layerOffset = Math.sqrt(
-              Math.pow(layer.frame.y, 2) + Math.pow(layer.frame.x, 2)
-            );
-
-            if (layerOffset > largestHypotenuse) {
-              largestHypotenuse = layerOffset;
-              lastArtboard = layer;
-            }
-          });
+          console.log(lastArtboard);
 
           const artboard = new Artboard({
             parent: parentDocument.selectedPage,

@@ -9,8 +9,6 @@ export default document => {
       Math.pow(layer.frame.y, 2) + Math.pow(layer.frame.x, 2)
     );
 
-    console.log(layer);
-
     if (!lastArtboard) {
       lastArtboard = layer;
     } else if (layerOffset > largestHypotenuse) {

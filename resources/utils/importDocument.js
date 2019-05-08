@@ -19,8 +19,6 @@ export default (parentDocument, documentToImport) => {
 
           const lastArtboard = getLastArtboard(selectedDocument);
 
-          console.log(lastArtboard);
-
           const artboard = new Artboard({
             parent: parentDocument.selectedPage,
             id: layer.id,

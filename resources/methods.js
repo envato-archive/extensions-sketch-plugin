@@ -8,28 +8,28 @@ export default {
   connectToSketch: webContents => {
     const currentDocument = Document.getSelectedDocument();
     const documentId = currentDocument.id;
-    webContents.executeJavaScript(`sketchConnected('${documentId}')`);
 
     const pluginVersion = require("../package.json").version;
-    webContents.executeJavaScript(`setPluginVersion('${pluginVersion}')`);
-
     const licenseCode = Settings.settingForKey("license_code");
     const licenseEmail = Settings.settingForKey("license_email");
-    webContents.executeJavaScript(
-      `setLicense('${licenseCode}', '${licenseEmail}')`
-    );
-
-    const elementsToken = Settings.settingForKey("elements_token");
-    webContents.executeJavaScript(`setElementsToken('${elementsToken}')`);
-
     const projectName = Settings.documentSettingForKey(
       currentDocument,
       "project_name"
     );
-    webContents.executeJavaScript(`setProjectName('${projectName}')`);
-
+    const elementsToken = Settings.settingForKey("elements_token");
     const photoResponse = Settings.settingForKey("photo_response");
-    webContents.executeJavaScript(`setPhotoResponse('${photoResponse}')`);
+
+    webContents
+      .executeJavaScript(`sketchConnected('${documentId}')`)
+      .then(() => {
+        webContents.executeJavaScript(`setPluginVersion('${pluginVersion}')`);
+        webContents.executeJavaScript(
+          `setLicense('${licenseCode}', '${licenseEmail}')`
+        );
+        webContents.executeJavaScript(`setElementsToken('${elementsToken}')`);
+        webContents.executeJavaScript(`setProjectName('${projectName}')`);
+        webContents.executeJavaScript(`setPhotoResponse('${photoResponse}')`);
+      });
   },
 
   setProjectName: (webContents, document, name) => {

@@ -17,7 +17,6 @@ export default {
       "project_name"
     );
     const elementsToken = Settings.settingForKey("elements_token");
-    const photoResponse = Settings.settingForKey("photo_response");
 
     webContents
       .executeJavaScript(`sketchConnected('${documentId}')`)
@@ -28,7 +27,6 @@ export default {
         );
         webContents.executeJavaScript(`setElementsToken('${elementsToken}')`);
         webContents.executeJavaScript(`setProjectName('${projectName}')`);
-        webContents.executeJavaScript(`setPhotoResponse('${photoResponse}')`);
       });
   },
 
@@ -43,12 +41,6 @@ export default {
     Settings.setSettingForKey("license_email", email);
 
     webContents.executeJavaScript(`setLicense('${code}', '${email}')`);
-  },
-
-  setPhotoResponse: (webContents, { response }) => {
-    Settings.setSettingForKey("photo_response", response);
-
-    webContents.executeJavaScript(`setPhotoResponse('${response}')`);
   },
 
   importRemoteFile: base64Data => {

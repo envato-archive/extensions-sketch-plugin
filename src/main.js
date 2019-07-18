@@ -69,9 +69,6 @@ export default function(context) {
   webContents.on("setProjectName", name =>
     METHODS.setProjectName(webContents, document, name)
   );
-  webContents.on("setPhotoResponse", response =>
-    METHODS.setPhotoResponse(webContents, { response })
-  );
   webContents.on("setElementsToken", token =>
     METHODS.setElementsToken(webContents, { token })
   );

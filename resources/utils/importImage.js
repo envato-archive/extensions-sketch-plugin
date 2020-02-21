@@ -19,27 +19,21 @@ export default (parentDocument, data) => {
   }
   try {
     fs.writeFileSync(outputPath, buffer, "NSData");
-    const heightFactor = IMPORT_IMAGE_WIDTH / data.width;
 
-    const height = data.height * heightFactor;
+    const height = data.height * (IMPORT_IMAGE_WIDTH / data.width);
     const width = IMPORT_IMAGE_WIDTH;
     const importPage = parentDocument.selectedPage || parentDocument.pages[0];
 
-    const coordinates = calculateImportCoordinates(importPage);
+    const { x, y } = calculateImportCoordinates(importPage);
 
     const artboard = new Artboard({
       parent: importPage,
-      frame: {
-        x: coordinates.x,
-        y: coordinates.y,
-        width,
-        height
-      }
+      frame: { x, y, width, height }
     });
     new Image({
       image: outputPath,
       parent: artboard,
-      frame: { width, height }
+      frame: { x: 0, y: 0, width, height }
     });
 
     parentDocument.centerOnLayer(artboard);

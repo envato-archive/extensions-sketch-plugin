@@ -4,7 +4,9 @@
   "version": "1.0.2",
   "repository": "https://github.com/envato/extensions-sketch-plugin",
   "engines": {
-    "sketch": ">=3.0"
+    "sketch": ">=3.0",
+    "node": "14.18.3"
+
   },
   "skpm": {
     "name": "Envato Elements",
